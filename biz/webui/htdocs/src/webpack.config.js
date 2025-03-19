@@ -2,6 +2,7 @@ var webpack = require('webpack');
 var path = require('path');
 
 module.exports = {
+  mode: 'production',
   entry: {
     index: path.join(__dirname, './js/index'),
     decode: path.join(__dirname, './js/decode')
@@ -11,19 +12,26 @@ module.exports = {
     filename: '[name].js'
   },
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        loader: 'babel-loader'
+        use: {
+          loader: 'babel-loader'
+        }
       },
       {
         test: /\.css$/,
-        loader: 'style-loader!css-loader'
+        use: ['style-loader', 'css-loader']
       },
       {
         test: /\.(png|woff|woff2|eot|ttf|svg)$/,
-        loader: 'url-loader?limit=1000000'
+        type: 'asset',
+        parser: {
+          dataUrlCondition: {
+            maxSize: 1000000
+          }
+        }
       }
     ]
   },
@@ -32,11 +40,12 @@ module.exports = {
       'process.env': {
         NODE_ENV: '"production"'
       }
-    }),
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false
-      }
     })
-  ]
+  ],
+  optimization: {
+    minimize: true
+  },
+  performance: {
+    hints: false
+  }
 };
