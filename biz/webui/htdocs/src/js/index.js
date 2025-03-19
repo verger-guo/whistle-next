@@ -1,3 +1,4 @@
+// require('../css/tailwind.css');
 require('../css/index.css');
 var $ = require('jquery');
 var React = require('react');
@@ -65,7 +66,7 @@ function isUrl(url) {
   return /^https?:\/\/[^/]/i.test(url);
 }
 
-window.setWhistleDataUrl = function(url) {
+window.setWhistleDataUrl = function (url) {
   if (isUrl(url)) {
     if (dataCenter.handleDataUrl) {
       dataCenter.handleDataUrl(url);
@@ -191,9 +192,9 @@ function checkJson(item) {
     } catch (e) {
       message.warn(
         'Warning: the value of ' +
-          item.name +
-          ' can`t be parsed into json. ' +
-          e.message
+        item.name +
+        ' can`t be parsed into json. ' +
+        e.message
       );
     }
   }
@@ -232,8 +233,8 @@ function checkUrl(url) {
 }
 
 function getRemoteData(url, callback) {
-  var opts = {  url: url };
-  dataCenter.importRemote(opts,  function (data, xhr) {
+  var opts = { url: url };
+  dataCenter.importRemote(opts, function (data, xhr) {
     if (!data) {
       util.showSystemError(xhr);
       return callback(true);
@@ -273,13 +274,13 @@ function readFileJson(file, cb) {
     win.alert('The file size is too large.');
     return cb();
   }
-  util.readFileAsText(file, function(text) {
+  util.readFileAsText(file, function (text) {
     cb(parseJSON(text));
   });
 }
 
 function handleImportData(file, cb, name) {
-  readFileJson(file, function(data) {
+  readFileJson(file, function (data) {
     if (!data || util.handleImportData(data)) {
       return cb();
     }
@@ -387,7 +388,7 @@ function updateData(list, data, modal) {
   var hasChanged;
   var _list = [];
   var activeItem;
-  changedList.forEach(function(item) {
+  changedList.forEach(function (item) {
     var name = item.name;
     var curItem = data[name];
     if (!curItem) {
@@ -403,7 +404,7 @@ function updateData(list, data, modal) {
   });
   appendList(list, _list);
   if (activeItem) {
-    list.forEach(function(name) {
+    list.forEach(function (name) {
       data[name].active = false;
     });
     activeItem.active = true;
@@ -547,7 +548,7 @@ var Index = React.createClass({
     var networkModal = dataCenter.networkModal;
     dataCenter.setValuesModal(valuesModal);
     dataCenter.rulesModal = rulesModal;
-    dataCenter.exportSessions = function(sessions, opts, name) {
+    dataCenter.exportSessions = function (sessions, opts, name) {
       var type;
       if (typeof opts === 'string') {
         type = opts;
@@ -682,7 +683,7 @@ var Index = React.createClass({
     });
     return self.updateMenuView(state);
   },
-  initPluginTabs: function(state, plugins) {
+  initPluginTabs: function (state, plugins) {
     plugins = plugins || {};
     var tabs = state.tabs;
     var activeTabs;
@@ -690,7 +691,7 @@ var Index = React.createClass({
     try {
       activeTabs = JSON.parse(storage.get('activePluginTabList'));
       activeName = storage.get('activePluginTabName');
-    } catch (e) {}
+    } catch (e) { }
     if (!Array.isArray(activeTabs)) {
       return;
     }
@@ -710,7 +711,7 @@ var Index = React.createClass({
           url: plugin.pluginHomepage || 'plugin.' + name + '/'
         };
       });
-    activeTabs.forEach(function(name) {
+    activeTabs.forEach(function (name) {
       name = name && map[name];
       name && tabs.push(name);
     });
@@ -736,19 +737,19 @@ var Index = React.createClass({
   triggerValuesChange: function (type) {
     util.triggerListChange('values', this.getListByName('values', type));
   },
-  syncData: function(plugin, cb) {
+  syncData: function (plugin, cb) {
     var state = this.state;
     this.refs.syncDialog.show(plugin, state.rules, state.values, cb);
   },
-  syncRules: function(plugin) {
+  syncRules: function (plugin) {
     var self = this;
-    self.syncData(plugin, function() {
+    self.syncData(plugin, function () {
       self.refs.syncDialog.syncRules(plugin);
     });
   },
-  syncValues: function(plugin) {
+  syncValues: function (plugin) {
     var self = this;
-    self.syncData(plugin, function() {
+    self.syncData(plugin, function () {
       self.refs.syncDialog.syncValues(plugin);
     });
   },
@@ -832,7 +833,7 @@ var Index = React.createClass({
     self.setState({});
     return changed;
   },
-  reloadDataQuite: function() {
+  reloadDataQuite: function () {
     this.reloadData(true);
   },
   reloadData: function (quite) {
@@ -844,7 +845,7 @@ var Index = React.createClass({
     var handleResponse = function (data, xhr) {
       if (!data) {
         !quite && util.showSystemError(xhr, true);
-        return setTimeout(function() {
+        return setTimeout(function () {
           events.trigger(isRules ? 'rulesChanged' : 'valuesChanged', true);
         }, 2000);
       }
@@ -910,7 +911,7 @@ var Index = React.createClass({
     }
     tips.html(msg);
   },
-  showTab: function() {
+  showTab: function () {
     var pageName = getPageName(this.state);
     if (!pageName || pageName.indexOf('rules') != -1) {
       this.showRules();
@@ -941,14 +942,14 @@ var Index = React.createClass({
     var preventDefault = function (e) {
       e.preventDefault();
     };
-    events.on('showRulesDialog', function(_, data) {
+    events.on('showRulesDialog', function (_, data) {
       if (data && !self.isHideRules()) {
         self.refs.rulesDialog.show(data.rules, data.values);
       }
     });
 
     if (isClient) {
-      var findEditor = function(keyword, prev) {
+      var findEditor = function (keyword, prev) {
         events.editorMatchedCount = 0;
         events.trigger(prev ? 'findEditorPrev' : 'findEditorNext', keyword);
         return events.editorMatchedCount;
@@ -959,7 +960,7 @@ var Index = React.createClass({
     var composerDidMount;
     var composerData;
 
-    events.one('composerDidMount', function() {
+    events.one('composerDidMount', function () {
       composerDidMount = true;
       if (composerData) {
         events.trigger('_setComposerData', composerData);
@@ -967,15 +968,15 @@ var Index = React.createClass({
       }
     });
 
-    events.on('showPluginOptionTab', function(_, plugin) {
+    events.on('showPluginOptionTab', function (_, plugin) {
       plugin && self.showPluginTab(util.getSimplePluginName(plugin));
     });
 
-    events.on('disablePlugin', function(_, plugin, disabled) {
+    events.on('disablePlugin', function (_, plugin, disabled) {
       self.setPluginState(util.getSimplePluginName(plugin), disabled);
     });
 
-    events.on('setComposerData', function(_, data) {
+    events.on('setComposerData', function (_, data) {
       if (!data || self.state.rulesMode) {
         return;
       }
@@ -990,12 +991,12 @@ var Index = React.createClass({
       }
     });
 
-    events.on('showPluginOption', function(_, plugin) {
+    events.on('showPluginOption', function (_, plugin) {
       if (!plugin) {
         return;
       }
       var name = util.getSimplePluginName(plugin);
-      var url =  plugin.pluginHomepage || 'plugin.' + name + '/';
+      var url = plugin.pluginHomepage || 'plugin.' + name + '/';
       if ((plugin.pluginHomepage || plugin.openExternal) && !plugin.openInPlugins && !plugin.openInModal) {
         return window.open(url);
       }
@@ -1012,14 +1013,14 @@ var Index = React.createClass({
         height: modal.height
       });
     });
-    events.on('hidePluginOption', function() {
+    events.on('hidePluginOption', function () {
       self.refs.iframeDialog.hide();
     });
 
-    events.on('download', function(_, data) {
+    events.on('download', function (_, data) {
       self.download(data);
     });
-    events.on('showMockDialog', function(_, data) {
+    events.on('showMockDialog', function (_, data) {
       if (data) {
         self.refs.mockDialog.show(data.item, data.type);
       }
@@ -1027,7 +1028,7 @@ var Index = React.createClass({
     events.on('enableRecord', function () {
       self.enableRecord();
     });
-    events.on('showJsonViewDialog', function(_, data, keyPath) {
+    events.on('showJsonViewDialog', function (_, data, keyPath) {
       self.refs.jsonDialog.show(data, keyPath);
     });
     events.on('rulesChanged', function (_, force) {
@@ -1074,7 +1075,7 @@ var Index = React.createClass({
       }
     });
     var editorWin;
-    events.on('openEditor', function(_, text) {
+    events.on('openEditor', function (_, text) {
       if (storage.get('viewAllInNewWindow') === '1') {
         return util.openInNewWin(text || '');
       }
@@ -1084,32 +1085,32 @@ var Index = React.createClass({
           self.refs.editorWin.show();
           return editorWin.setValue(text);
         }
-        window._initWhistleTextEditor_ = function(win) {
+        window._initWhistleTextEditor_ = function (win) {
           editorWin = win;
           editorWin.setValue(text);
         };
         self.refs.editorWin.show('editor.html');
-      } catch (e) {}
+      } catch (e) { }
     });
-    events.on('openInNewWin', function() {
+    events.on('openInNewWin', function () {
       try {
         util.openInNewWin(editorWin.getEditorValue() || '');
         self.refs.editorWin.hide();
-      } catch (e) {}
+      } catch (e) { }
     });
 
     var updateTimer;
-    events.on('updateUIThrottle', function() {
+    events.on('updateUIThrottle', function () {
       if (updateTimer) {
         return;
       }
-      updateTimer = setTimeout(function() {
+      updateTimer = setTimeout(function () {
         updateTimer = null;
         self.setState({});
       }, 200);
     });
 
-    events.on('addNewRulesFile', function(_, data) {
+    events.on('addNewRulesFile', function (_, data) {
       var filename = data.filename;
       var modal = self.state.rules;
       var item = modal.add(filename, data.data);
@@ -1120,7 +1121,7 @@ var Index = React.createClass({
         self.triggerRulesChange('create');
       }
     });
-    events.on('addNewValuesFile', function(_, data) {
+    events.on('addNewValuesFile', function (_, data) {
       var filename = data.filename;
       var modal = self.state.values;
       var item = modal.add(filename, data.data);
@@ -1255,7 +1256,7 @@ var Index = React.createClass({
         if ((!overLeftBar && !overPlugins) || self.isHideRules()) {
           return;
         }
-        handleImportData(file, function(json) {
+        handleImportData(file, function (json) {
           if (!json || !overLeftBar) {
             return;
           }
@@ -1269,14 +1270,14 @@ var Index = React.createClass({
       .on('keyup', function (e) {
         if ((e.metaKey || e.ctrlKey) && e.keyCode === 82) {
           e.preventDefault();
-        } else if (self.state.name == 'network' &&  e.keyCode === 191) {
+        } else if (self.state.name == 'network' && e.keyCode === 191) {
           var nodeName = document.activeElement && document.activeElement.nodeName;
           if (nodeName !== 'INPUT' && nodeName !== 'TEXTAREA' && !$('.modal.in').length) {
             events.trigger('focusNetworkFilterInput');
           }
         }
       })
-      .on('contextmenu', '.w-textarea-bar', function(e) {
+      .on('contextmenu', '.w-textarea-bar', function (e) {
         e.preventDefault();
       });
     var removeItem = function (e) {
@@ -1307,8 +1308,8 @@ var Index = React.createClass({
             e.preventDefault();
             window.open(
               'https://avwo.github.io/whistle/webui/' +
-                self.state.name +
-                '.html'
+              self.state.name +
+              '.html'
             );
           } else if (e.keyCode === 116) {
             e.preventDefault();
@@ -1719,7 +1720,7 @@ var Index = React.createClass({
       }
       var oldPlugins = self.state.plugins;
       if (oldPlugins && data.plugins) {
-        Object.keys(data.plugins).forEach(function(name) {
+        Object.keys(data.plugins).forEach(function (name) {
           var oldP = oldPlugins[name];
           if (oldP) {
             var p = data.plugins[name];
@@ -1740,7 +1741,7 @@ var Index = React.createClass({
     try {
       var onReady = window.parent.onWhistleReady;
       if (typeof onReady === 'function') {
-        var selectItem = function(item) {
+        var selectItem = function (item) {
           var modal = item && self.state.network;
           var index = modal && modal.getList().indexOf(item);
           if (index >= 0) {
@@ -1759,7 +1760,7 @@ var Index = React.createClass({
           clearSessions: self.clear,
           selectIndex: selectIndex,
           selectItem: selectItem,
-          setActive: function(item) {
+          setActive: function (item) {
             if (item >= 0) {
               selectIndex(item);
             } else {
@@ -1768,7 +1769,7 @@ var Index = React.createClass({
           }
         });
       }
-    } catch (e) {}
+    } catch (e) { }
     self.handleDataUrl(dataUrl || util.getDataUrl());
     dataCenter.handleDataUrl = self.handleDataUrl;
     dataUrl = null;
@@ -1780,12 +1781,12 @@ var Index = React.createClass({
     }
     return true;
   },
-  handleDataUrl: function(url) {
+  handleDataUrl: function (url) {
     if (!isUrl(url)) {
       return;
     }
     var self = this;
-    getRemoteData(url, function(err, data) {
+    getRemoteData(url, function (err, data) {
       if (!err) {
         self.importAnySessions(data);
       }
@@ -2057,7 +2058,7 @@ var Index = React.createClass({
     );
     util.changePageName('network');
   },
-  showAccount: function() {
+  showAccount: function () {
     var self = this;
     if (self.state.name == 'account') {
       return;
@@ -2068,7 +2069,7 @@ var Index = React.createClass({
     });
     util.changePageName('account');
   },
-  signOut: function() {
+  signOut: function () {
     this.state.showAccount = false;
     this.showTab();
   },
@@ -2266,7 +2267,7 @@ var Index = React.createClass({
       }
     });
   },
-  handleImportRules: function(data) {
+  handleImportRules: function (data) {
     if (!data) {
       return;
     }
@@ -2277,7 +2278,7 @@ var Index = React.createClass({
       this.uploadRules();
     }
   },
-  handleImportValues: function(data) {
+  handleImportValues: function (data) {
     if (!data) {
       return;
     }
@@ -2383,7 +2384,7 @@ var Index = React.createClass({
     }
     self.hideValuesOptions();
   },
-  addValue: function () {},
+  addValue: function () { },
   showValues: function (e) {
     if (this.state.name != 'values') {
       this.setMenuOptionsState();
@@ -2542,8 +2543,8 @@ var Index = React.createClass({
       if (tabs.length >= MAX_PLUGINS_TABS) {
         win.alert(
           'At most ' +
-            MAX_PLUGINS_TABS +
-            ' tabs can be opened at the same time.'
+          MAX_PLUGINS_TABS +
+          ' tabs can be opened at the same time.'
         );
         return this.showPlugins();
       }
@@ -2563,8 +2564,8 @@ var Index = React.createClass({
     });
     this.updatePluginTabInfo(tabs, active);
   },
-  updatePluginTabInfo: function(tabs, active) {
-    tabs = tabs.map(function(tab) {
+  updatePluginTabInfo: function (tabs, active) {
+    tabs = tabs.map(function (tab) {
       return tab.name;
     });
     storage.set('activePluginTabList', JSON.stringify(tabs));
@@ -2984,7 +2985,7 @@ var Index = React.createClass({
       }
     );
   },
-  getActiveRuleName: function() {
+  getActiveRuleName: function () {
     var modal = this.state.rules;
     var activeItem = modal.getActive();
     return activeItem ? activeItem.name : '';
@@ -3187,13 +3188,13 @@ var Index = React.createClass({
       showRemoveOptions: false
     });
   },
-  removeRulesBatch: function(list) {
+  removeRulesBatch: function (list) {
     var self = this;
     dataCenter.rules.remove({ list: list }, function (data, xhr) {
       if (data && data.ec === 0) {
         var nextItem;
         var modal = self.state.rules;
-        list.forEach(function(name) {
+        list.forEach(function (name) {
           var item = modal.data[name] || '';
           if (item.active) {
             nextItem = modal.getSibling(name);
@@ -3211,13 +3212,13 @@ var Index = React.createClass({
     });
     this.refs.deleteRulesDialog.hide();
   },
-  removeValuesBatch: function(list) {
+  removeValuesBatch: function (list) {
     var self = this;
     dataCenter.values.remove({ list: list }, function (data, xhr) {
       if (data && data.ec === 0) {
         var nextItem;
         var modal = self.state.values;
-        list.forEach(function(name) {
+        list.forEach(function (name) {
           var item = modal.data[name] || '';
           if (item.active) {
             nextItem = modal.getSibling(name);
@@ -3472,7 +3473,7 @@ var Index = React.createClass({
     );
     e && e.preventDefault();
   },
-  setPluginState: function(name, disabled) {
+  setPluginState: function (name, disabled) {
     var self = this;
     if (self.state.ndp) {
       return message.warn('Not allowed disable plugins.');
@@ -3672,11 +3673,11 @@ var Index = React.createClass({
         session.dnsTime = startTime;
         startTime = Math.floor(
           startTime +
-            util.getTimeFromHar(timings.connect) +
-            util.getTimeFromHar(timings.ssl) +
-            util.getTimeFromHar(timings.send) +
-            util.getTimeFromHar(timings.blocked) +
-            util.getTimeFromHar(timings.wait)
+          util.getTimeFromHar(timings.connect) +
+          util.getTimeFromHar(timings.ssl) +
+          util.getTimeFromHar(timings.send) +
+          util.getTimeFromHar(timings.blocked) +
+          util.getTimeFromHar(timings.wait)
         );
         session.requestTime = startTime;
         startTime = Math.floor(
@@ -3717,7 +3718,7 @@ var Index = React.createClass({
     }
     dataCenter.upload.importSessions(data, dataCenter.addNetworkList);
   },
-  getExportSessions: function() {
+  getExportSessions: function () {
     var modal = this.state.network;
     var sessions = this.currentFoucsItem;
     this.currentFoucsItem = null;
@@ -3798,7 +3799,7 @@ var Index = React.createClass({
       self.refs.certsInfoDialog.show(data.certs, data.dir);
     });
   },
-  onTopContextMenu: function(e) {
+  onTopContextMenu: function (e) {
     if (this.getTabName() !== 'network') {
       return;
     }
@@ -3843,8 +3844,8 @@ var Index = React.createClass({
     }
     e.preventDefault();
   },
-  onClickTopMenu: function(action) {
-    switch(action) {
+  onClickTopMenu: function (action) {
+    switch (action) {
     case 'top':
       if (this.container) {
         this.container[0].scrollTop = 0;
@@ -3898,7 +3899,7 @@ var Index = React.createClass({
       self.setState({ forceShowLeftMenu: true });
     }, 200);
   },
-  selectCAType: function(e) {
+  selectCAType: function (e) {
     var caType = getCAType(e.target.value);
     this.setState({ caType: caType });
     storage.set('caType', caType);
@@ -3911,7 +3912,7 @@ var Index = React.createClass({
       self.setState({ forceShowLeftMenu: false });
     }, 500);
   },
-  updateMenuView: function(state) {
+  updateMenuView: function (state) {
     var opt = state.networkOptions[state.networkOptions.length - 1];
     if (state.network.isTreeView) {
       opt.icon = 'globe';
@@ -3938,7 +3939,7 @@ var Index = React.createClass({
       this.toggleTreeView();
     }
   },
-  download: function(data) {
+  download: function (data) {
     if (!data || !(util.isString(data.content) ||
       util.isString(data.value) || util.isString(data.base64))) {
       return;
@@ -3946,7 +3947,7 @@ var Index = React.createClass({
     var base64 = util.getString(data.base64);
     ReactDOM.findDOMNode(this.refs.filename).value = util.getString(data.name);
     ReactDOM.findDOMNode(this.refs.dataType).value = base64 ? 'rawBase64' : '';
-    ReactDOM.findDOMNode(this.refs.content).value = base64 || util.getString(data.value|| data.content);
+    ReactDOM.findDOMNode(this.refs.content).value = base64 || util.getString(data.value || data.content);
     ReactDOM.findDOMNode(this.refs.downloadForm).submit();
   },
   getTabName: function () {
@@ -3970,7 +3971,7 @@ var Index = React.createClass({
     }
     return name || 'network';
   },
-  isHideRules: function() {
+  isHideRules: function () {
     return this.state.networkMode || this.state.pluginsMode;
   },
   render: function () {
@@ -4084,7 +4085,7 @@ var Index = React.createClass({
     var mustHideLeftMenu = hideLeftMenu && !state.forceShowLeftMenu;
     var pluginsOnlyMode = pluginsMode && rulesMode;
     var showAccount = state.showAccount;
-    var showLeftMenu = ((networkMode && !showAccount)  || state.showLeftMenu) && (!pluginsOnlyMode || showAccount);
+    var showLeftMenu = ((networkMode && !showAccount) || state.showLeftMenu) && (!pluginsOnlyMode || showAccount);
     var disabledAllPlugins = state.disabledAllPlugins;
     var disabledAllRules = state.disabledAllRules;
     var forceShowLeftMenu, forceHideLeftMenu;
@@ -4851,7 +4852,7 @@ var Index = React.createClass({
                         checked={state.backRulesFirst}
                         onChange={this.enableBackRulesFirst}
                       />{' '}
-                     The later rules first
+                      The later rules first
                     </label>
                   </p>
                 )}
@@ -4861,7 +4862,7 @@ var Index = React.createClass({
                     <span className="glyphicon glyphicon-edit" />
                   </legend>
                   <pre>{accountRules}</pre>
-                </fieldset> : null }
+                </fieldset> : null}
               </div>
               <div className="modal-footer">
                 <button
@@ -4964,7 +4965,7 @@ var Index = React.createClass({
                   href={caUrl}
                   target="downloadTargetFrame"
                 >
-                  <img src={qrCode} width="300" style={{margin: 10}} />
+                  <img src={qrCode} width="300" style={{ margin: 10 }} />
                 </a>
                 <div className="w-https-settings">
                   <p>
@@ -4980,7 +4981,7 @@ var Index = React.createClass({
                         checked={state.interceptHttpsConnects}
                         onChange={this.interceptHttpsConnects}
                         type="checkbox"
-                         className="w-va-mdl"
+                        className="w-va-mdl"
                       />
                       <span className="w-va-mdl w-mrl-5">
                         Enable HTTPS (Capture Tunnel Connects)
@@ -4995,9 +4996,9 @@ var Index = React.createClass({
                         type="checkbox"
                         className="w-va-mdl"
                       />
-                    <span className="w-va-mdl w-mrl-5">
-                      Enable HTTP/2
-                    </span>
+                      <span className="w-va-mdl w-mrl-5">
+                        Enable HTTP/2
+                      </span>
                     </label>
                   </p>
                   <a
@@ -5389,7 +5390,7 @@ var Index = React.createClass({
         </form>
         <SyncDialog ref="syncDialog" />
         <JSONDialog ref="jsonDialog" />
-        <div id="copyTextBtn" style={{display: 'none'}} />
+        <div id="copyTextBtn" style={{ display: 'none' }} />
         <MockDialog ref="mockDialog" />
         <RulesDialog ref="rulesDialog" />
         <form
