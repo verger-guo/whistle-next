@@ -2,7 +2,7 @@
 require('../css/index.css');
 var $ = require('jquery');
 var React = require('react');
-var ReactDOM = require('react-dom/client');
+var ReactDOM = require('react-dom');
 var Clipboard = require('clipboard');
 var EditorDialog = require('./editor-dialog');
 var List = require('./list');
@@ -5587,7 +5587,6 @@ class Index extends React.Component {
     );
   }
 }
-
 dataCenter.getInitialData(function (data) {
   const root = ReactDOM.createRoot(document.getElementById('root'));
   root.render(

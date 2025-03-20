@@ -9,7 +9,11 @@ module.exports = {
   },
   output: {
     path: path.join(__dirname, '../js'),
-    filename: '[name].js'
+    filename: '[name].js',
+    library: {
+      type: 'umd'
+    },
+    globalObject: 'this'
   },
   module: {
     rules: [
@@ -17,7 +21,14 @@ module.exports = {
         test: /\.js$/,
         exclude: /node_modules/,
         use: {
-          loader: 'babel-loader'
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              ['@babel/preset-env', {
+                modules: 'commonjs'
+              }]
+            ]
+          }
         }
       },
       {
@@ -51,5 +62,11 @@ module.exports = {
   },
   performance: {
     hints: false
+  },
+  resolve: {
+    fallback: {
+      'buffer': false,
+      'path': false
+    }
   }
 };
