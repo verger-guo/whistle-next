@@ -22,18 +22,20 @@ util.addDragEvent('.w-divider', function (target, x, y) {
   );
 });
 
-var Divider = React.createClass({
-  componentDidMount: function () {
+class Divider extends React.Component {
+  componentDidMount() {
     this.reset();
-  },
-  triggerDOMReady: function () {
+  }
+
+  triggerDOMReady = () => {
     if (this.__inited) {
       return;
     }
     this.__inited = true;
     this.props.onDOMReady && this.props.onDOMReady();
-  },
-  reset: function () {
+  };
+
+  reset = () => {
     var self = this;
     var divider = ReactDOM.findDOMNode(self.refs.divider);
     var vertical = util.getBoolean(self.props.vertical);
@@ -65,8 +67,9 @@ var Divider = React.createClass({
 
     rightElem[prop](Math.max(rightWidth, 5));
     self.triggerDOMReady();
-  },
-  render: function () {
+  };
+
+  render() {
     var vertical = util.getBoolean(this.props.vertical);
     var divider = <div className="w-divider"></div>;
     var hideLeft = this.props.hideLeft;
@@ -114,6 +117,6 @@ var Divider = React.createClass({
       </div>
     );
   }
-});
+}
 
 module.exports = Divider;

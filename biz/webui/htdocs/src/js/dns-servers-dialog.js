@@ -2,11 +2,10 @@ require('./base-css.js');
 var React = require('react');
 var Dialog = require('./dialog');
 
-var DNSDialog = React.createClass({
-  getInitialState: function () {
-    return { servers: '' };
-  },
-  show: function (data) {
+class DNSDialog extends React.Component {
+  state = { servers: '' };
+
+  show = (data) => {
     if (!data || !data.dns) {
       return;
     }
@@ -27,15 +26,18 @@ var DNSDialog = React.createClass({
       doh: data.doh
     });
     this.refs.dnsServersDialog.show();
-  },
-  hide: function () {
+  };
+
+  hide = () => {
     this.refs.dnsServersDialog.hide();
     this._hideDialog = true;
-  },
-  shouldComponentUpdate: function () {
+  };
+
+  shouldComponentUpdate() {
     return this._hideDialog === false;
-  },
-  render: function () {
+  }
+
+  render() {
     var state = this.state;
     var title;
     if (state.doh) {
@@ -77,6 +79,6 @@ var DNSDialog = React.createClass({
       </Dialog>
     );
   }
-});
+}
 
 module.exports = DNSDialog;

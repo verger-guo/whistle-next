@@ -2,21 +2,24 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 var util = require('./util');
 
-var TextView = React.createClass({
-  componentDidMount: function () {
+class TextView extends React.Component {
+  componentDidMount() {
     this.updateValue();
-  },
-  componentDidUpdate: function () {
+  }
+
+  componentDidUpdate() {
     this.updateValue();
-  },
-  shouldComponentUpdate: function (nextProps) {
+  }
+
+  shouldComponentUpdate(nextProps) {
     if (this.props.value !== nextProps.value) {
       this.props.value = nextProps.value;
       this.updateValue();
     }
     return this.props.className !== nextProps.className;
-  },
-  updateValue: function () {
+  }
+
+  updateValue = () => {
     var self = this;
     var value = self.props.value || '';
     var textarea = ReactDOM.findDOMNode(self.refs.textarea);
@@ -42,8 +45,9 @@ var TextView = React.createClass({
     self._timeout = setTimeout(function () {
       textarea.value = value;
     }, 360);
-  },
-  render: function () {
+  };
+
+  render() {
     return (
       <textarea
         ref="textarea"
@@ -53,6 +57,6 @@ var TextView = React.createClass({
       />
     );
   }
-});
+}
 
 module.exports = TextView;

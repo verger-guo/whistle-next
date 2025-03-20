@@ -2,11 +2,10 @@ var $ = (window.jQuery = require('jquery'));
 var React = require('react');
 var ReactDOM = require('react-dom');
 
-var Dialog = React.createClass({
-  getInitialState: function () {
-    return {};
-  },
-  componentDidMount: function () {
+class Dialog extends React.Component {
+  state = {};
+
+  componentDidMount() {
     var self = this;
     this.container = $(document.createElement('div'));
     var clazz = this.props.fullCustom ? ' w-custom-dialog' : '';
@@ -26,15 +25,17 @@ var Dialog = React.createClass({
         self.props.onShow(self);
       });
     }
-  },
-  componentDidUpdate: function () {
+  }
+
+  componentDidUpdate() {
     ReactDOM.unstable_renderSubtreeIntoContainer(
       this,
       this.getDialogElement(),
       this.container[0]
     );
-  },
-  getDialogElement: function () {
+  }
+
+  getDialogElement = () => {
     var props = this.props;
     var className = props.wclassName;
     var style;
@@ -54,12 +55,14 @@ var Dialog = React.createClass({
         <div className="modal-content">{this.props.children}</div>
       </div>
     );
-  },
-  componentWillUnmount: function () {
+  };
+
+  componentWillUnmount() {
     ReactDOM.unmountComponentAtNode(this.container[0]);
     document.body.removeChild(this.container[0]);
-  },
-  show: function () {
+  }
+
+  show = () => {
     if (this.isVisible()) {
       return;
     }
@@ -71,20 +74,24 @@ var Dialog = React.createClass({
         }
         : 'show'
     );
-  },
-  isVisible: function () {
+  };
+
+  isVisible = () => {
     return this.container.is(':visible');
-  },
-  hide: function () {
+  };
+
+  hide = () => {
     this.container.modal('hide');
-  },
-  destroy: function () {
+  };
+
+  destroy = () => {
     this.hide();
     this.container && this.componentWillUnmount();
-  },
-  render: function () {
+  };
+
+  render() {
     return null;
   }
-});
+}
 
 module.exports = Dialog;

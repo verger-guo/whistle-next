@@ -3,8 +3,8 @@ require('../css/btn-group.css');
 var React = require('react');
 var util = require('./util');
 
-var BtnGroup = React.createClass({
-  handleClick: function (btn) {
+class BtnGroup extends React.Component {
+  handleClick = (btn) => {
     if (btn.active || btn.disabled) {
       return;
     }
@@ -15,20 +15,23 @@ var BtnGroup = React.createClass({
         curBtn: btn
       });
     }
-  },
-  clearSelection: function() {
+  };
+
+  clearSelection = () => {
     var list = this.props.tabs || this.props.btns;
     list.forEach(function (btn) {
       btn.active = false;
     });
-  },
-  onDoubleClick: function (e) {
+  };
+
+  onDoubleClick = (e) => {
     if (this.props.onDoubleClick) {
       this.props.onDoubleClick(e);
     }
     e.stopPropagation();
-  },
-  render: function () {
+  };
+
+  render() {
     var self = this;
     var tabs = self.props.tabs;
     var isSmall = self.props.type === 's';
@@ -80,6 +83,6 @@ var BtnGroup = React.createClass({
       </div>
     );
   }
-});
+}
 
 module.exports = BtnGroup;

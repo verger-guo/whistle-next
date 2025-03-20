@@ -133,17 +133,17 @@ PROTOCOLS.forEach(function (name) {
   DEFAULT_RULES_MODAL[name] = '';
 });
 
-var Overview = React.createClass({
-  getInitialState: function () {
-    return {
-      showOnlyMatchRules: storage.get('showOnlyMatchRules') == 1
-    };
-  },
-  shouldComponentUpdate: function (nextProps) {
+class Overview extends React.Component {
+  state = {
+    showOnlyMatchRules: storage.get('showOnlyMatchRules') == 1
+  };
+
+  shouldComponentUpdate(nextProps) {
     var hide = util.getBoolean(this.props.hide);
     return hide != util.getBoolean(nextProps.hide) || !hide;
-  },
-  componentDidMount: function () {
+  }
+
+  componentDidMount() {
     var self = this;
     var container = ReactDOM.findDOMNode(self.refs.container);
     events.on('overviewScrollTop', function () {
@@ -151,23 +151,26 @@ var Overview = React.createClass({
         container.scrollTop = 0;
       }
     });
-  },
-  showOnlyMatchRules: function (e) {
+  }
+
+  showOnlyMatchRules = (e) => {
     var showOnlyMatchRules = e.target.checked;
     storage.set('showOnlyMatchRules', showOnlyMatchRules ? 1 : 0);
     this.setState({
       showOnlyMatchRules: showOnlyMatchRules
     });
-  },
-  onHelp: function (e) {
+  };
+
+  onHelp = (e) => {
     var name = e.target.getAttribute('data-name');
     var helpUrl = getHelpUrl(name);
     if (!helpUrl) {
       return;
     }
     window.open(name === 'rule' ? helpUrl + 'rule/' : helpUrl);
-  },
-  render: function () {
+  };
+
+  render() {
     var overviewModal = DEFAULT_OVERVIEW_MODAL;
     var rulesModal = DEFAULT_RULES_MODAL;
     var modal = this.props.modal;
@@ -415,6 +418,6 @@ var Overview = React.createClass({
       </div>
     );
   }
-});
+}
 
 module.exports = Overview;

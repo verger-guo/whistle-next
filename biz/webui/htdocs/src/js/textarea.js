@@ -15,8 +15,8 @@ function showFrames() {
   events.trigger('showFrames');
 }
 
-var Tips = React.createClass({
-  render: function () {
+class Tips extends React.Component {
+  render() {
     var data = this.props.data || { hide: true };
     var className = 'w-textview-tips' + (data.hide ? ' hide' : '');
     if (data.isFrames) {
@@ -50,13 +50,12 @@ var Tips = React.createClass({
       </div>
     );
   }
-});
+}
 
-var Textarea = React.createClass({
-  getInitialState: function () {
-    return {};
-  },
-  shouldComponentUpdate: function (nextProps) {
+class Textarea extends React.Component {
+  state = {};
+
+  shouldComponentUpdate(nextProps) {
     var hide = util.getBoolean(this.props.hide);
     var nextHide = util.getBoolean(nextProps.hide);
     if (hide !== nextHide || !this.props.value) {
@@ -66,14 +65,17 @@ var Textarea = React.createClass({
       return false;
     }
     return this.props.value !== nextProps.value;
-  },
-  preventBlur: function (e) {
+  }
+
+  preventBlur = (e) => {
     e.target.nodeName != 'INPUT' && e.preventDefault();
-  },
-  edit: function () {
+  };
+
+  edit = () => {
     util.openEditor(this.props.value);
-  },
-  showMockDialog: function(e) {
+  };
+
+  showMockDialog = (e) => {
     var self = this;
     var props = self.props;
     var reqData = props.reqData;
@@ -84,8 +86,9 @@ var Textarea = React.createClass({
       });
     }
     self.showNameInput(e);
-  },
-  showNameInput: function (e) {
+  };
+
+  showNameInput = (e) => {
     var self = this;
     self.state.showDownloadInput = /w-download/.test(e.target.className);
     self.state.showNameInput = true;
@@ -98,8 +101,9 @@ var Textarea = React.createClass({
       nameInput.select();
       nameInput.focus();
     });
-  },
-  download: function () {
+  };
+
+  download = () => {
     var target = ReactDOM.findDOMNode(this.refs.nameInput);
     var name = target.value.trim();
     target.value = '';
@@ -111,8 +115,9 @@ var Textarea = React.createClass({
       base64 != null ? base64 : this.props.value || '';
     ReactDOM.findDOMNode(this.refs.downloadForm).submit();
     this.hideNameInput();
-  },
-  submit: function (e) {
+  };
+
+  submit = (e) => {
     if (e.keyCode != 13 && e.type != 'click') {
       return;
     }
@@ -158,8 +163,9 @@ var Textarea = React.createClass({
       'The key \'' + name + '\' already exists.\nDo you want to override it.',
       handleSubmit
     );
-  },
-  hideNameInput: function () {
+  };
+
+  hideNameInput = () => {
     this.state.showNameInput = false;
     this.forceUpdate(function () {
       var nameInput = ReactDOM.findDOMNode(this.refs.nameInput);
@@ -168,8 +174,9 @@ var Textarea = React.createClass({
         nameInput.value = '';
       }
     });
-  },
-  render: function () {
+  };
+
+  render() {
     var props = this.props;
     var value = props.value || '';
     var exceed = value.length - MAX_LENGTH;
@@ -250,6 +257,6 @@ var Textarea = React.createClass({
       </div>
     );
   }
-});
+}
 
 module.exports = Textarea;

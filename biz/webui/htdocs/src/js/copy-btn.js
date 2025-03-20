@@ -1,16 +1,17 @@
 var React = require('react');
 
-var CopyBtn = React.createClass({
-  getInitialState: function () {
-    return {};
-  },
-  handleLeave: function () {
+class CopyBtn extends React.Component {
+  state = {};
+
+  handleLeave = () => {
     this.setState({ copied: false });
-  },
-  handleCopy: function () {
+  };
+
+  handleCopy = () => {
     this.setState({ copied: true });
-  },
-  render: function () {
+  };
+
+  render() {
     var copied = this.state.copied;
     return (
       <a
@@ -25,6 +26,6 @@ var CopyBtn = React.createClass({
       </a>
     );
   }
-});
+}
 
 module.exports = CopyBtn;

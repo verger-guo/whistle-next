@@ -11,14 +11,13 @@ var MAX_FILE_SIZE = 1024 * 1025;
 var MAX_LENGTH = 1024 * 64;
 var JSON_RE = /^\s*(?:[\{｛][\w\W]+[\}｝]|\[[\w\W]+\])\s*$/;
 
-var FrameComposer = React.createClass({
-  getInitialState: function () {
-    return {
-      isHexText: !!storage.get('showHexTextFrame'),
-      isCRLF: !!storage.get('useCRLFrame')
-    };
-  },
-  componentDidMount: function () {
+class FrameComposer extends React.Component {
+  state = {
+    isHexText: !!storage.get('showHexTextFrame'),
+    isCRLF: !!storage.get('useCRLFrame')
+  };
+
+  componentDidMount() {
     var self = this;
     self.dataField = ReactDOM.findDOMNode(self.refs.uploadData);
     self.dataForm = ReactDOM.findDOMNode(self.refs.uploadDataForm);
@@ -54,36 +53,43 @@ var FrameComposer = React.createClass({
     });
     var text = storage.get('composeFrameData');
     this.setTextarea(String(text || ''));
-  },
-  shouldComponentUpdate: function (nextProps) {
+  }
+
+  shouldComponentUpdate(nextProps) {
     var hide = util.getBoolean(this.props.hide);
     return hide != util.getBoolean(nextProps.hide) || !hide;
-  },
-  uploadTextToServer: function () {
+  }
+
+  uploadTextToServer = () => {
     this.target = 'server';
     this.dataType = 'text';
     this.dataField.click();
-  },
-  uploadBinToServer: function () {
+  };
+
+  uploadBinToServer = () => {
     this.target = 'server';
     this.dataType = 'bin';
     this.dataField.click();
-  },
-  uploadTextToClient: function () {
+  };
+
+  uploadTextToClient = () => {
     this.target = 'client';
     this.dataType = 'text';
     this.dataField.click();
-  },
-  uploadBinToClient: function () {
+  };
+
+  uploadBinToClient = () => {
     this.target = 'client';
     this.dataType = 'bin';
     this.dataField.click();
-  },
-  onFormChange: function () {
+  };
+
+  onFormChange = () => {
     this.uploadForm(new FormData(this.dataForm));
     this.dataField.value = '';
-  },
-  uploadForm: function (form) {
+  };
+
+  uploadForm = (form) => {
     var file = form.get('uploadData');
     if (file.size > MAX_FILE_SIZE) {
       return win.alert('The file size cannot exceed 1m.');
@@ -98,8 +104,9 @@ var FrameComposer = React.createClass({
       self.send(params);
       self.dataField.value = '';
     });
-  },
-  send: function (params, cb) {
+  };
+
+  send = (params, cb) => {
     var data = this.props.data;
     if (!data) {
       return;
@@ -115,8 +122,9 @@ var FrameComposer = React.createClass({
       }
       cb && cb();
     });
-  },
-  onSend: function (e) {
+  };
+
+  onSend = (e) => {
     var value = this.state.text;
     var self = this;
     if (!value || self.sendTimer) {
@@ -147,8 +155,9 @@ var FrameComposer = React.createClass({
       events.trigger('autoRefreshFrames');
       self.setState({});
     });
-  },
-  format: function () {
+  };
+
+  format = () => {
     var data = util.parseRawJson(this.state.text);
     if (data) {
       this.setState({
@@ -156,8 +165,9 @@ var FrameComposer = React.createClass({
         text: JSON.stringify(data, null, '  ')
       });
     }
-  },
-  setTextarea: function (text) {
+  };
+
+  setTextarea = (text) => {
     this.setState({
       text: text,
       isJSON: JSON_RE.test(text)
@@ -166,24 +176,29 @@ var FrameComposer = React.createClass({
     this.timer = setTimeout(function () {
       storage.set('composeFrameData', text);
     }, 600);
-  },
-  onTextareaChange: function (e) {
+  };
+
+  onTextareaChange = (e) => {
     this.setTextarea(e.target.value);
-  },
-  preventDefault: function (e) {
+  };
+
+  preventDefault = (e) => {
     e.preventDefault();
-  },
-  onTypeChange: function (e) {
+  };
+
+  onTypeChange = (e) => {
     var isHexText = e.target.checked;
     storage.set('showHexTextFrame', isHexText ? 1 : '');
     this.setState({ isHexText: isHexText });
-  },
-  onCRLFChange: function (e) {
+  };
+
+  onCRLFChange = (e) => {
     var isCRLF = e.target.checked;
     storage.set('useCRLFrame', isCRLF ? 1 : '');
     this.setState({ isCRLF: isCRLF });
-  },
-  render: function () {
+  };
+
+  render() {
     var data = this.props.data || '';
     util.socketIsClosed(data);
     var state = this.state;
@@ -350,6 +365,6 @@ var FrameComposer = React.createClass({
       </div>
     );
   }
-});
+}
 
 module.exports = FrameComposer;

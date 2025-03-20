@@ -117,18 +117,17 @@ function isValue(str) {
   return str[0] === '(' && str[str.length - 1] === ')';
 }
 
-var MockDialog = React.createClass({
-  getInitialState: function () {
-    return {
-      rules: '',
-      dataSrc: 'resBody',
-      valueType: 'file',
-      protocol: 'file://',
-      inlineValue: '',
-      comment: ''
-    };
-  },
-  show: function (item, dataSrc) {
+class MockDialog extends React.Component {
+  state = {
+    rules: '',
+    dataSrc: 'resBody',
+    valueType: 'file',
+    protocol: 'file://',
+    inlineValue: '',
+    comment: ''
+  };
+
+  show = (item, dataSrc) => {
     if (!item) {
       return;
     }
@@ -164,15 +163,17 @@ var MockDialog = React.createClass({
       url.focus();
     }, 600);
     this._textarea.value = getValue(item, dataSrc);
-  },
-  onValueTypeChange: function(e) {
+  };
+
+  onValueTypeChange = (e) => {
     var value = e.target.value;
     var protocol = this.state.protocol;
     this.setState({
       valueType: INLINE_PROTOCOLS.indexOf(protocol) === -1 ? value : 'inline'
     }, this.updateRules);
-  },
-  onProtoChange: function(e) {
+  };
+
+  onProtoChange = (e) => {
     var protocol = e.target.value;
     var curValue = this.state.inlineValue;
     switch (protocol) {
@@ -286,8 +287,9 @@ var MockDialog = React.createClass({
         protocol: protocol
       }, this.updateRules);
     }
-  },
-  getValues: function() {
+  };
+
+  getValues = () => {
     var valueType = this.getValueType();
     var isFile = valueType === 'file';
     if (!isFile && valueType !== 'key') {
@@ -311,8 +313,9 @@ var MockDialog = React.createClass({
       values.value = value;
     }
     return values;
-  },
-  export: function() {
+  };
+
+  export = () => {
     var data = [this.wrapComment()];
     var values = this.getValues();
     if (values) {
@@ -320,14 +323,17 @@ var MockDialog = React.createClass({
     }
     ReactDOM.findDOMNode(this.refs.content).value = JSON.stringify(data);
     ReactDOM.findDOMNode(this.refs.downloadForm).submit();
-  },
-  isValuesKey: function(dataSrc) {
+  };
+
+  isValuesKey = (dataSrc) => {
     return (dataSrc || this.state.dataSrc)[0] === '{';
-  },
-  selectAllText: function(e) {
+  };
+
+  selectAllText = (e) => {
     e.target.select();
-  },
-  updateRules: function() {
+  };
+
+  updateRules = () => {
     var state = this.state;
     var pattern = trim(state.pattern);
     if (!pattern) {
@@ -355,20 +361,24 @@ var MockDialog = React.createClass({
       }
     }
     this.setState({ rules: rules });
-  },
-  onPatternChange: function(e) {
+  };
+
+  onPatternChange = (e) => {
     var pattern = e.target.value.replace(/\s+/g, '');
     this.setState({ pattern: pattern }, this.updateRules);
-  },
-  onInlineValueChange: function(e) {
+  };
+
+  onInlineValueChange = (e) => {
     var inlineValue = e.target.value;
     this.setState({ inlineValue: inlineValue }, this.updateRules);
-  },
-  onKeyNameChange: function(e) {
+  };
+
+  onKeyNameChange = (e) => {
     var keyName = e.target.value.replace(/\s+/g, '');
     this.setState({ keyName: keyName }, this.updateRules);
-  },
-  onSourceChange: function(e) {
+  };
+
+  onSourceChange = (e) => {
     var self = this;
     var dataSrc = e.target.value;
     var updateValue = function() {
@@ -390,8 +400,9 @@ var MockDialog = React.createClass({
         self.setState({ hasChanged: false });
       }
     });
-  },
-  componentDidMount: function() {
+  };
+
+  componentDidMount() {
     var self = this;
     var iframe = ReactDOM.findDOMNode(self.refs.iframe);
     var initTextArea = function() {
@@ -438,8 +449,9 @@ var MockDialog = React.createClass({
         self.hideParams();
       }
     });
-  },
-  formatValue: function() {
+  }
+
+  formatValue = () => {
     var textarea = this._textarea;
     try {
       var val = textarea.value.trim();
@@ -453,11 +465,13 @@ var MockDialog = React.createClass({
     } catch (e) {
       message.error(e.message);
     }
-  },
-  clearValue: function() {
+  };
+
+  clearValue = () => {
     this._textarea.value = '';
-  },
-  removeRules: function() {
+  };
+
+  removeRules = () => {
     var self = this;
     win.confirm('Are you sure to delete the rules?', function(sure) {
       if (sure) {
@@ -465,8 +479,9 @@ var MockDialog = React.createClass({
         ReactDOM.findDOMNode(self.refs.url).focus();
       }
     });
-  },
-  showParams: function() {
+  };
+
+  showParams = () => {
     var url = ReactDOM.findDOMNode(this.refs.url).value.replace(/#.*$/, '');
     var index = url.indexOf('?');
     var hasQuery = index !== -1;
@@ -478,20 +493,23 @@ var MockDialog = React.createClass({
     } else {
       this.setState({ showParams: true, hasQuery: hasQuery });
     }
-  },
-  hideParams: function() {
+  };
+
+  hideParams = () => {
     if (this.state.showParams) {
       this.setState({ showParams: false });
     }
-  },
-  toggleParams: function() {
+  };
+
+  toggleParams = () => {
     if (this.state.showParams) {
       this.hideParams();
     } else {
       this.showParams();
     }
-  },
-  clearQuery: function() {
+  };
+
+  clearQuery = () => {
     var self = this;
     win.confirm('Are you sure to delete all params?', function(sure) {
       if (sure) {
@@ -499,27 +517,31 @@ var MockDialog = React.createClass({
         self.hideParams();
       }
     });
-  },
-  addQueryParam: function() {
+  };
+
+  addQueryParam = () => {
     this.refs.paramsEditor.onAdd();
-  },
-  onParamsChange: function () {
+  };
+
+  onParamsChange = () => {
     var query = this.refs.paramsEditor.toString();
     var elem = ReactDOM.findDOMNode(this.refs.url);
     this.setState({
       hasQuery: !!query,
       pattern: util.replacQuery(elem.value, query)
     }, this.updateRules);
-  },
-  getValueType: function() {
+  };
+
+  getValueType = () => {
     var valueType = this.state.valueType;
     if (valueType !== 'file') {
       return valueType;
     }
     var protocol = this.state.protocol;
     return INLINE_PROTOCOLS.indexOf(protocol) === -1 ? valueType : 'inline';
-  },
-  save: function(force) {
+  };
+
+  save = (force) => {
     var self = this;
     var rules = self.state.rules;
     var keyName = self.getKeyName();
@@ -550,18 +572,21 @@ var MockDialog = React.createClass({
       }
     }
     next(true);
-  },
-  getKeyName: function() {
+  };
+
+  getKeyName = () => {
     var state = this.state;
     if (this.isValuesKey()) {
       return state.dataSrc.slice(1, -1);
     }
     return state.keyName;
-  },
-  saveValueOnly: function() {
+  };
+
+  saveValueOnly = () => {
     this.save(true);
-  },
-  saveValue: function() {
+  };
+
+  saveValue = () => {
     var self = this;
     var value = self._textarea.value;
     var filename = self.getKeyName();
@@ -580,17 +605,20 @@ var MockDialog = React.createClass({
       }
     }
     );
-  },
-  trimInline: function() {
+  };
+
+  trimInline = () => {
     var inlineValue = this.state.inlineValue;
     this.setState({
       inlineValue: inlineValue.trim()
     }, this.updateRules);
-  },
-  clearInline: function() {
+  };
+
+  clearInline = () => {
     this.setState({ inlineValue: '' }, this.updateRules);
-  },
-  asValue: function() {
+  };
+
+  asValue = () => {
     var inlineValue = this.state.inlineValue;
     if (/\s/.test(inlineValue)) {
       return;
@@ -599,14 +627,17 @@ var MockDialog = React.createClass({
       inlineValue = '(' + inlineValue + ')';
     }
     this.setState({ inlineValue: inlineValue }, this.updateRules);
-  },
-  valueNotChanged: function() {
+  };
+
+  valueNotChanged = () => {
     return this.isValuesKey() ? !this.state.hasChanged : this.getValueType() !== 'key';
-  },
-  onComment: function(e) {
+  };
+
+  onComment = (e) => {
     this.setState({ comment: e.target.value });
-  },
-  wrapComment: function() {
+  };
+
+  wrapComment = () => {
     var state = this.state;
     var rules = state.rules;
     if (!rules || this.getValueType() !== 'file') {
@@ -614,8 +645,9 @@ var MockDialog = React.createClass({
     }
     var comment = state.comment.trim();
     return comment ? '# ' + comment + '\n' + rules : rules;
-  },
-  render: function () {
+  };
+
+  render() {
     var state = this.state;
     var valueType = this.getValueType();
     var isFile = valueType === 'file';
@@ -817,18 +849,20 @@ var MockDialog = React.createClass({
       </Dialog>
     );
   }
-});
+}
 
-var MockDialogWrap = React.createClass({
-  shouldComponentUpdate: function () {
+class MockDialogWrap extends React.Component {
+  shouldComponentUpdate() {
     return false;
-  },
-  show: function (text, dataSrc) {
+  }
+
+  show = (text, dataSrc) => {
     this.refs.mockDialog.show(text, dataSrc);
-  },
-  render: function () {
+  };
+
+  render() {
     return <MockDialog ref="mockDialog" />;
   }
-});
+}
 
 module.exports = MockDialogWrap;

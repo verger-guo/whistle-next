@@ -15,23 +15,27 @@ var storage = require('./storage');
 var NOT_EMPTY_STYLE = { backgroundColor: 'lightyellow' };
 var NOT_EMPTY_RE = /[^\s]/;
 
-var Settings = React.createClass({
-  getInitialState: function () {
+class Settings extends React.Component {
+  constructor(props, context) {
+    super(props, context);
     var dragger = columns.getDragger();
     var urlType = storage.get('urlType');
     dragger.onDrop = dragger.onDrop.bind(this);
-    return $.extend(this.getNetworkSettings(), { dragger: dragger, urlType: urlType === '-' ? '-' : '' });
-  },
-  getNetworkSettings: function () {
+    this.state = $.extend(this.getNetworkSettings(), { dragger: dragger, urlType: urlType === '-' ? '-' : '' });
+  }
+
+  getNetworkSettings = () => {
     return $.extend(dataCenter.getFilterText(), {
       columns: columns.getAllColumns()
     });
-  },
-  onColumnsResort: function () {
+  };
+
+  onColumnsResort = () => {
     events.trigger('onColumnsChanged');
     this.setState({ columns: columns.getAllColumns() });
-  },
-  resetColumns: function () {
+  };
+
+  resetColumns = () => {
     var self = this;
     win.confirm('Are you sure to reset the columns of network table?', function(sure) {
       if (sure) {
@@ -41,8 +45,9 @@ var Settings = React.createClass({
         self.onColumnsResort();
       }
     });
-  },
-  componentDidMount: function () {
+  };
+
+  componentDidMount() {
     var self = this;
     events.on('toggleTreeView', function () {
       self.setState({});
@@ -57,8 +62,9 @@ var Settings = React.createClass({
         }
       });
     });
-  },
-  onNetworkSettingsChange: function (e) {
+  }
+
+  onNetworkSettingsChange = (e) => {
     var target = e.target;
     var name = target.getAttribute('data-name');
     if (!name || name === 'path') {
@@ -116,24 +122,29 @@ var Settings = React.createClass({
       events.trigger('onColumnsChanged');
     }
     this.setState(settings);
-  },
-  onFilterKeyDown: function (e) {
+  };
+
+  onFilterKeyDown = (e) => {
     if ((e.ctrlKey || e.metaKey) && e.keyCode == 88) {
       e.stopPropagation();
     }
-  },
-  onRowsChange: function (e) {
+  };
+
+  onRowsChange = (e) => {
     NetworkModal.setMaxRows(e.target.value);
-  },
-  showDialog: function () {
+  };
+
+  showDialog = () => {
     var settings = this.getNetworkSettings();
     this.setState(settings);
     this.refs.networkSettingsDialog.show();
-  },
-  hideDialog: function () {
+  };
+
+  hideDialog = () => {
     this.refs.networkSettingsDialog.hide();
-  },
-  editCustomCol: function (e) {
+  };
+
+  editCustomCol = (e) => {
     e.preventDefault();
     var self = this;
     self.refs.editCustomColumn.show();
@@ -154,22 +165,25 @@ var Settings = React.createClass({
         }, 360);
       }
     );
-  },
-  onNameChange: function (e) {
+  };
+
+  onNameChange = (e) => {
     var value = e.target.value;
     this.setState({
       value: value.trim(),
       nameChanged: true
     });
-  },
-  onKeyChange: function(e) {
+  };
+
+  onKeyChange = (e) => {
     var value = e.target.value;
     this.setState({
       key: value.replace(/\s+/, ''),
       nameChanged: true
     });
-  },
-  setCustomColumn: function(name, key, value) {
+  };
+
+  setCustomColumn = (name, key, value) => {
     var self = this;
     dataCenter.setCustomColumn(
       {
@@ -190,12 +204,14 @@ var Settings = React.createClass({
         events.trigger('onColumnTitleChange');
       }
     );
-  },
-  changeName: function () {
+  };
+
+  changeName = () => {
     var state = this.state;
     this.setCustomColumn(state.name, state.key, state.value);
-  },
-  setSettings: function(settings) {
+  };
+
+  setSettings = (settings) => {
     if (!settings) {
       return;
     }
@@ -286,11 +302,13 @@ var Settings = React.createClass({
         }
       }
     });
-  },
-  import: function(e) {
+  };
+
+  import = (e) => {
     events.trigger('importSessions', e);
-  },
-  export: function() {
+  };
+
+  export = () => {
     var state = this.state;
     var columns = [];
     state.columns.forEach(function(col) {
@@ -319,13 +337,15 @@ var Settings = React.createClass({
       name: 'network_settings_' + Date.now() + '.txt',
       value: JSON.stringify(settings, null, '  ')
     });
-  },
-  onUrlType: function(e) {
+  };
+
+  onUrlType = (e) => {
     var urlType = e.target.value;
     storage.set('urlType', urlType);
     this.setState({ urlType: urlType });
-  },
-  render: function () {
+  };
+
+  render() {
     var self = this;
     var state = self.state;
     var columnList = state.columns;
@@ -599,6 +619,6 @@ var Settings = React.createClass({
       </Dialog>
     );
   }
-});
+}
 
 module.exports = Settings;

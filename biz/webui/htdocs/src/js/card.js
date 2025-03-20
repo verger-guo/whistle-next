@@ -18,12 +18,14 @@ function showValues() {
 function showPlugins() {
   events.trigger('showPlugins');
 }
+
 // TODO: 只有插件页面才能通过 tab 打开，插件如果 disable 或 未安装提醒用户手动安装
-var Card = React.createClass({
-  onEdit: function() {
+class Card extends React.Component {
+  onEdit = () => {
     this.props.onEdit(this.props.data);
-  },
-  onOpen: function() {
+  };
+
+  onOpen = () => {
     var data = this.props.data;
     var url = data.url;
     switch (url) {
@@ -40,8 +42,9 @@ var Card = React.createClass({
       return this.props.onOpen(data);
     }
     window.open(url);
-  },
-  renderButton: function(btn) {
+  };
+
+  renderButton = (btn) => {
     return btn && (
       <a onClick={function() {
         var data = this.props.data;
@@ -52,8 +55,9 @@ var Card = React.createClass({
         {btn.name}
       </a>
     );
-  },
-  render: function() {
+  };
+
+  render() {
     var data = this.props.data;
     var onEdit = this.props.onEdit;
     return (
@@ -82,6 +86,6 @@ var Card = React.createClass({
       </div>
     );
   }
-});
+}
 
 module.exports = Card;

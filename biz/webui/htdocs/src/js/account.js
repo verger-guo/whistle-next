@@ -13,12 +13,13 @@ function getWidgetId(widget) {
   return widget.name;
 }
 
-var Account = React.createClass({
-  getInitialState: function() {
+class Account extends React.Component {
+  constructor(props) {
+    super(props);
     var curMap = {};
     var activeName = storage.get('activeAccountTabName') || 'Widgets';
     var tabs = [];
-    this.props.cards.forEach(function(card) {
+    props.cards.forEach(function(card) {
       curMap[card.name] = card;
     });
     if (!curMap[activeName]) {
@@ -33,17 +34,20 @@ var Account = React.createClass({
         }
       });
     } catch (e) {}
-    return { tabs: tabs, activeName: activeName };
-  },
-  onEdit: function(card) {
+    this.state = { tabs: tabs, activeName: activeName };
+  }
 
-  },
-  saveTabs: function() {
+  onEdit = (card) => {
+
+  };
+
+  saveTabs = () => {
     var state = this.state;
     storage.set('activeAccountTabList', JSON.stringify(state.tabs.map(getWidgetId)));
     storage.set('activeAccountTabName', state.activeName);
-  },
-  onOpen: function(card) {
+  };
+
+  onOpen = (card) => {
     var tabs = this.state.tabs;
     if (tabs.indexOf(card) === -1) {
       if (tabs.length >= MAX_TABS) {
@@ -53,8 +57,9 @@ var Account = React.createClass({
       tabs.push(card);
     }
     this.setState({ activeName: card.name }, this.saveTabs);
-  },
-  onClose: function(tab) {
+  };
+
+  onClose = (tab) => {
     var tabs = this.state.tabs;
     var index = tabs.indexOf(tab);
     if (index !== -1) {
@@ -65,20 +70,23 @@ var Account = React.createClass({
       tabs.splice(index, 1);
       this.setState({ activeName: activeName }, this.saveTabs);
     }
-  },
-  onActive: function(e) {
+  };
+
+  onActive = (e) => {
     var activeName = $(e.target).closest('li').attr('data-name');
     if (activeName == this.state.activeName) {
       return;
     }
     this.setState({ activeName: activeName });
     storage.set('activeAccountTabName', activeName);
-  },
-  shouldComponentUpdate: function (nextProps) {
+  };
+
+  shouldComponentUpdate(nextProps) {
     var hide = util.getBoolean(this.props.hide);
     return hide != util.getBoolean(nextProps.hide) || !hide;
-  },
-  render: function() {
+  }
+
+  render() {
     var self = this;
     var cards = self.props.cards;
     var tabs = self.state.tabs;
@@ -141,6 +149,6 @@ var Account = React.createClass({
       </div> : null
     );
   }
-});
+}
 
 module.exports = Account;

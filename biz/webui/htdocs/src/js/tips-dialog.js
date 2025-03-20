@@ -2,23 +2,25 @@ require('./base-css.js');
 var React = require('react');
 var Dialog = require('./dialog');
 
-var TipsDialog = React.createClass({
-  getInitialState: function () {
-    return {};
-  },
-  show: function (data) {
+class TipsDialog extends React.Component {
+  state = {};
+
+  show = (data) => {
     this._hideDialog = false;
     this.setState(data);
     this.refs.tipsDialog.show();
-  },
-  hide: function () {
+  };
+
+  hide = () => {
     this.refs.tipsDialog.hide();
     this._hideDialog = true;
-  },
-  shouldComponentUpdate: function () {
+  };
+
+  shouldComponentUpdate() {
     return this._hideDialog === false;
-  },
-  render: function () {
+  }
+
+  render() {
     var state = this.state;
     return (
       <Dialog ref="tipsDialog" wstyle="w-dns-servers-dialog w-tips-dialog">
@@ -49,6 +51,6 @@ var TipsDialog = React.createClass({
       </Dialog>
     );
   }
-});
+}
 
 module.exports = TipsDialog;

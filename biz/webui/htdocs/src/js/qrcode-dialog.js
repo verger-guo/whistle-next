@@ -4,11 +4,12 @@ var Dialog = require('./dialog');
 var QRCode = require('qrcode');
 var win = require('./win');
 
-var QRCodeDialog = React.createClass({
-  shouldComponentUpdate: function () {
+class QRCodeDialog extends React.Component {
+  shouldComponentUpdate() {
     return false;
-  },
-  show: function (url) {
+  }
+
+  show = (url) => {
     if (!url) {
       return;
     }
@@ -32,8 +33,9 @@ var QRCodeDialog = React.createClass({
         self.result = result.substring(result.indexOf(',') + 1);
       }
     );
-  },
-  render: function () {
+  };
+
+  render() {
     return (
       <Dialog ref="qrcodeDialog" wstyle="w-qrcode-dialog">
         <div className="modal-body">
@@ -58,6 +60,6 @@ var QRCodeDialog = React.createClass({
       </Dialog>
     );
   }
-});
+}
 
 module.exports = QRCodeDialog;

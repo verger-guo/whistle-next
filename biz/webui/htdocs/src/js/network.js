@@ -16,18 +16,21 @@ var getWidth = function (vertical) {
   return Math.max(Math.floor(docElem.clientWidth / 3), 572);
 };
 
-var Network = React.createClass({
-  getInitialState: function () {
+class Network extends React.Component {
+  constructor(props) {
+    super(props);
     var dockToBottom = storage.get('dockToBottom');
     if (dockToBottom == null && /[&#?]dockToBottom=true(?:&|$|#)/.test(window.location.search)) {
       dockToBottom = true;
     }
-    return {
+
+    this.state = {
       dockToBottom: dockToBottom,
       rightWidth: getWidth(dockToBottom)
     };
-  },
-  componentDidMount: function () {
+  }
+
+  componentDidMount() {
     var self = this;
     $(window)
       .on('keydown', function (e) {
@@ -60,12 +63,14 @@ var Network = React.createClass({
           e.preventDefault();
         }
       });
-  },
-  shouldComponentUpdate: function (nextProps) {
+  }
+
+  shouldComponentUpdate(nextProps) {
     var hide = util.getBoolean(this.props.hide);
     return hide != util.getBoolean(nextProps.hide) || !hide;
-  },
-  onDockChange: function () {
+  }
+
+  onDockChange = () => {
     var self = this;
     var dockToBottom = !self.state.dockToBottom;
     storage.set('dockToBottom', dockToBottom ? 1 : '');
@@ -78,8 +83,9 @@ var Network = React.createClass({
         self.refs.divider.reset();
       }
     );
-  },
-  render: function () {
+  };
+
+  render() {
     var modal = this.props.modal;
     var dockToBottom = this.state.dockToBottom;
     return (
@@ -98,6 +104,6 @@ var Network = React.createClass({
       </Divider>
     );
   }
-});
+}
 
 module.exports = Network;

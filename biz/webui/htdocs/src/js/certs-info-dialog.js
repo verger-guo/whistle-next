@@ -25,11 +25,10 @@ function readFile(file, callback) {
   };
 }
 
-var HistoryData = React.createClass({
-  getInitialState: function () {
-    return { list: [] };
-  },
-  show: function (data, dir) {
+class HistoryData extends React.Component {
+  state = { list: [] };
+
+  show = (data, dir) => {
     var list = [];
     var rootCA;
     this._certsDir = this._certsDir || dir;
@@ -87,12 +86,14 @@ var HistoryData = React.createClass({
     this.refs.certsInfoDialog.show();
     this._hideDialog = false;
     this.setState({ list: list });
-  },
-  hide: function () {
+  };
+
+  hide = () => {
     this.refs.certsInfoDialog.hide();
     this._hideDialog = true;
-  },
-  showRemoveTips: function (item) {
+  };
+
+  showRemoveTips = (item) => {
     var dir = (item.dir || '').replace(/\\/g, '/');
     dir = dir + (/\/$/.test(dir) ? '' : '/');
     var crt = dir + getCertName(item);
@@ -102,14 +103,16 @@ var HistoryData = React.createClass({
       tips: key + '\n' + crt,
       dir: item.dir
     });
-  },
-  handleCgi: function (data, xhr) {
+  };
+
+  handleCgi = (data, xhr) => {
     if (!data) {
       return util.showSystemError(xhr);
     }
     this.show(data);
-  },
-  removeCert: function (item) {
+  };
+
+  removeCert = (item) => {
     var self = this;
     win.confirm(
       'Are you sure to delete \'' + getCertName(item) + '\'.',
@@ -120,11 +123,13 @@ var HistoryData = React.createClass({
         dataCenter.certs.remove({ filename: item.filename, type: item.type }, self.handleCgi);
       }
     );
-  },
-  shouldComponentUpdate: function () {
+  };
+
+  shouldComponentUpdate() {
     return this._hideDialog === false;
-  },
-  formatFiles: function (fileList) {
+  }
+
+  formatFiles = (fileList) => {
     var certs;
     for (var i = 0, len = fileList.length; i < len; i++) {
       var cert = fileList[i];
@@ -165,8 +170,9 @@ var HistoryData = React.createClass({
       }
     });
     return result;
-  },
-  handleChange: function (e) {
+  };
+
+  handleChange = (e) => {
     var self = this;
     var input = ReactDOM.findDOMNode(self.refs.uploadCerts);
     var files = input.files && self.formatFiles(input.files);
@@ -202,11 +208,13 @@ var HistoryData = React.createClass({
         }
       });
     });
-  },
-  showUpload: function () {
+  };
+
+  showUpload = () => {
     ReactDOM.findDOMNode(this.refs.uploadCerts).click();
-  },
-  render: function () {
+  };
+
+  render() {
     var self = this;
     var list = self.state.list || [];
     return (
@@ -320,6 +328,6 @@ var HistoryData = React.createClass({
       </Dialog>
     );
   }
-});
+}
 
 module.exports = HistoryData;

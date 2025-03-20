@@ -13,10 +13,12 @@ var dataCenter = require('./data-center');
 var IFrame = require('./iframe');
 var util = require('./util');
 
-var ReqData = React.createClass({
-  getInitialState: function () {
+class ReqData extends React.Component {
+  constructor(props) {
+    super(props);
     var account = dataCenter.getAccount();
-    return {
+
+    this.state = {
       tabs: [
         {
           name: 'Overview',
@@ -52,8 +54,9 @@ var ReqData = React.createClass({
       initedTools: false,
       addonTab: account && account.addonTab
     };
-  },
-  componentDidMount: function () {
+  }
+
+  componentDidMount() {
     if (this.props.data) {
       return;
     }
@@ -115,22 +118,25 @@ var ReqData = React.createClass({
         self.setState({ addonTab: addonTab });
       }
     });
-  },
-  showComposer: function (item) {
+  }
+
+  showComposer = (item) => {
     if (item) {
       this.state.activeItem = item;
     }
     this.toggleTab(this.state.tabs[3], function () {
       item && events.trigger('setComposer');
     });
-  },
-  onDragEnter: function (e) {
+  };
+
+  onDragEnter = (e) => {
     if (e.dataTransfer.types.indexOf('reqdataid') != -1) {
       this.showComposer();
       e.preventDefault();
     }
-  },
-  onDrop: function (e) {
+  };
+
+  onDrop = (e) => {
     var modal = this.props.modal;
     var id = e.dataTransfer.getData('reqDataId');
     var list = modal && modal.list;
@@ -144,11 +150,13 @@ var ReqData = React.createClass({
         return this.showComposer(data);
       }
     }
-  },
-  onDoubleClick: function (e) {
+  };
+
+  onDoubleClick = (e) => {
     events.trigger('ensureSelectedItemVisible');
-  },
-  toggleTab: function (tab, callback) {
+  };
+
+  toggleTab = (tab, callback) => {
     if (tab.name === 'Inspectors' && this.state.initedInspectors) {
       var inspectors = $('.w-detail-inspectors');
       if (inspectors.length) {
@@ -162,16 +170,18 @@ var ReqData = React.createClass({
     }
     this.selectTab(tab);
     this.setState({ tab: tab }, callback);
-  },
-  selectTab: function (tab) {
+  };
+
+  selectTab = (tab) => {
     this.state.tabs.forEach(function (tab) {
       tab.active = false;
     });
     tab.active = true;
     this.state.tab = tab;
     this.state['inited' + tab.name] = true;
-  },
-  render: function () {
+  };
+
+  render() {
     var modal = this.props.modal;
     var state = this.state;
     var data = this.props.data;
@@ -297,6 +307,6 @@ var ReqData = React.createClass({
       </div>
     );
   }
-});
+}
 
 module.exports = ReqData;

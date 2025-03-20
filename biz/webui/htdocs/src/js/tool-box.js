@@ -16,66 +16,74 @@ var MAX_SAVE_LEN = 5120;
 var MAX_TEXT_LEN = 5120;
 var MAX_IMAGE_SIZE = 1024 * 1024;
 
-var ToolBox = React.createClass({
-  getInitialState: function () {
-    return {
-      qrcodeValue: util
-        .toString(storage.get('qrcodeValue'))
-        .substring(0, MAX_QRCODE_LEN),
-      jsonValue: util
-        .toString(storage.get('jsonValue'))
-        .substring(0, MAX_SAVE_LEN),
-      codecText: util
-        .toString(storage.get('codecText'))
-        .substring(0, MAX_TEXT_LEN)
-    };
-  },
-  _saveQRCodeValue: function () {
+class ToolBox extends React.Component {
+  state = {
+    qrcodeValue: util
+      .toString(storage.get('qrcodeValue'))
+      .substring(0, MAX_QRCODE_LEN),
+    jsonValue: util
+      .toString(storage.get('jsonValue'))
+      .substring(0, MAX_SAVE_LEN),
+    codecText: util
+      .toString(storage.get('codecText'))
+      .substring(0, MAX_TEXT_LEN)
+  };
+
+  _saveQRCodeValue = () => {
     storage.set('qrcodeValue', this.state.qrcodeValue);
-  },
-  saveQRCodeValue: function () {
+  };
+
+  saveQRCodeValue = () => {
     clearTimeout(this.qrcodeTimer);
     this.qrcodeTimer = setTimeout(this._saveQRCodeValue, 1000);
-  },
-  _saveJSONValue: function () {
+  };
+
+  _saveJSONValue = () => {
     var value = this.state.jsonValue;
     if (value.length <= MAX_SAVE_LEN) {
       storage.set('jsonValue', value);
     }
-  },
-  _saveCodecText: function () {
+  };
+
+  _saveCodecText = () => {
     var value = this.state.codecText;
     if (value.length <= MAX_TEXT_LEN) {
       storage.set('codecText', value);
     }
-  },
-  saveCodecText: function () {
+  };
+
+  saveCodecText = () => {
     clearTimeout(this.codecTimer);
     this.codecTimer = setTimeout(this._saveCodecText, 1000);
-  },
-  onJSONChange: function (e) {
+  };
+
+  onJSONChange = (e) => {
     this.setState(
       {
         jsonValue: e.target.value
       },
       this._saveJSONValue
     );
-  },
-  onCodecChange: function (e) {
+  };
+
+  onCodecChange = (e) => {
     this.setState(
       {
         codecText: e.target.value
       },
       this._saveCodecText
     );
-  },
-  generageQRCode: function () {
+  };
+
+  generageQRCode = () => {
     this.refs.qrcodeDialog.show(this.state.qrcodeValue);
-  },
-  parseJSON: function () {
+  };
+
+  parseJSON = () => {
     events.trigger('showJsonViewDialog', this.state.jsonValue);
-  },
-  formatJSON: function() {
+  };
+
+  formatJSON = () => {
     var value = this.state.jsonValue;
     value = value && util.parseRawJson(value);
     if (!value) {
@@ -84,43 +92,49 @@ var ToolBox = React.createClass({
     this.setState({
       jsonValue: JSON.stringify(value, null, '  ')
     }, this._saveJSONValue);
-  },
-  encode: function () {
+  };
+
+  encode = () => {
     try {
       var value = encodeURIComponent(this.state.codecText);
       this.refs.textDialog.show(value);
     } catch (e) {
       win.alert(e.message);
     }
-  },
-  showShadowRules: function () {
+  };
+
+  showShadowRules = () => {
     try {
       var value = encodeURIComponent(this.state.codecText);
       this.refs.textDialog.show('"' + value + '"');
     } catch (e) {
       win.alert(e.message);
     }
-  },
-  decode: function () {
+  };
+
+  decode = () => {
     try {
       var value = decodeURIComponent(this.state.codecText);
       this.refs.textDialog.show(value);
     } catch (e) {
       win.alert(e.message);
     }
-  },
-  toQuery: function () {
+  };
+
+  toQuery = () => {
     try {
       var value = util.parseJSON2(this.state.codecText) || '';
       this.refs.textDialog.show(value && $.param(value, true));
     } catch (e) {
       win.alert(e.message);
     }
-  },
-  uploadImg: function () {
+  };
+
+  uploadImg = () => {
     ReactDOM.findDOMNode(this.refs.uploadImg).click();
-  },
-  readImg: function () {
+  };
+
+  readImg = () => {
     var self = this;
     var image = new FormData(ReactDOM.findDOMNode(this.refs.uploadImgForm)).get(
       'image'
@@ -133,31 +147,36 @@ var ToolBox = React.createClass({
       ReactDOM.findDOMNode(self.refs.uploadImg).value = '';
       self.refs.textDialog.show(type + base64, base64, image.name);
     });
-  },
-  onQRCodeChange: function (e) {
+  };
+
+  onQRCodeChange = (e) => {
     this.setState(
       {
         qrcodeValue: e.target.value
       },
       this.saveQRCodeValue
     );
-  },
-  onDomainChange: function (e) {
+  };
+
+  onDomainChange = (e) => {
     this.setState({
       domainValue: e.target.value
     });
-  },
-  generateCert: function () {
+  };
+
+  generateCert = () => {
     window.open(
       'cgi-bin/create-cert?domain=' + encodeURIComponent(this.state.domainValue),
       'downloadTargetFrame'
     );
-  },
-  shouldComponentUpdate: function (nextProps) {
+  };
+
+  shouldComponentUpdate(nextProps) {
     var hide = util.getBoolean(this.props.hide);
     return hide != util.getBoolean(nextProps.hide) || !hide;
-  },
-  render: function () {
+  }
+
+  render() {
     var state = this.state;
     var qrcodeValue = state.qrcodeValue;
     var jsonValue = state.jsonValue;
@@ -304,6 +323,6 @@ var ToolBox = React.createClass({
       </div>
     );
   }
-});
+}
 
 module.exports = ToolBox;

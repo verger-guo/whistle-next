@@ -1,20 +1,21 @@
 var React = require('react');
 var events = require('./events');
 
-var UpdateAllBtn = React.createClass({
-  getInitialState: function () {
-    return { disabled: true };
-  },
-  componentDidMount: function () {
+class UpdateAllBtn extends React.Component {
+  state = { disabled: true };
+
+  componentDidMount() {
     var self = this;
     events.on('setUpdateAllBtnState', function (_, hasNewPlugin) {
       self.setState({ disabled: !hasNewPlugin });
     });
-  },
-  updateAllPlugins: function () {
+  }
+
+  updateAllPlugins = () => {
     !this.state.disabled && events.trigger('updateAllPlugins');
-  },
-  render: function () {
+  };
+
+  render() {
     var hide = this.state.disabled || this.props.hide;
     return (
       <a
@@ -27,6 +28,6 @@ var UpdateAllBtn = React.createClass({
       </a>
     );
   }
-});
+}
 
 module.exports = UpdateAllBtn;

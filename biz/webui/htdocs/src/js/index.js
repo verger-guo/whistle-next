@@ -419,8 +419,9 @@ function getCAType(type) {
   return 'cer';
 }
 
-var Index = React.createClass({
-  getInitialState: function () {
+class Index extends React.Component {
+  constructor(props, context) {
+    super(props, context);
     var self = this;
     var modal = self.props.modal;
     var rules = modal.rules;
@@ -681,9 +682,10 @@ var Index = React.createClass({
     events.on('importSessionsFromUrl', function (_, url) {
       self.importSessionsFromUrl(url);
     });
-    return self.updateMenuView(state);
-  },
-  initPluginTabs: function (state, plugins) {
+    this.state = self.updateMenuView(state);
+  }
+
+  initPluginTabs = (state, plugins) => {
     plugins = plugins || {};
     var tabs = state.tabs;
     var activeTabs;
@@ -715,8 +717,9 @@ var Index = React.createClass({
       name = name && map[name];
       name && tabs.push(name);
     });
-  },
-  getListByName: function (name, type) {
+  };
+
+  getListByName = (name, type) => {
     var list = this.state[name].list;
     var data = this.state[name].data;
     return {
@@ -730,30 +733,36 @@ var Index = React.createClass({
         };
       })
     };
-  },
-  triggerRulesChange: function (type) {
+  };
+
+  triggerRulesChange = (type) => {
     util.triggerListChange('rules', this.getListByName('rules', type));
-  },
-  triggerValuesChange: function (type) {
+  };
+
+  triggerValuesChange = (type) => {
     util.triggerListChange('values', this.getListByName('values', type));
-  },
-  syncData: function (plugin, cb) {
+  };
+
+  syncData = (plugin, cb) => {
     var state = this.state;
     this.refs.syncDialog.show(plugin, state.rules, state.values, cb);
-  },
-  syncRules: function (plugin) {
+  };
+
+  syncRules = (plugin) => {
     var self = this;
     self.syncData(plugin, function () {
       self.refs.syncDialog.syncRules(plugin);
     });
-  },
-  syncValues: function (plugin) {
+  };
+
+  syncValues = (plugin) => {
     var self = this;
     self.syncData(plugin, function () {
       self.refs.syncDialog.syncValues(plugin);
     });
-  },
-  createPluginsOptions: function (plugins) {
+  };
+
+  createPluginsOptions = (plugins) => {
     plugins = plugins || {};
     var pluginsOptions = [
       {
@@ -786,8 +795,9 @@ var Index = React.createClass({
         });
       });
     return pluginsOptions;
-  },
-  reloadRules: function (data, quite) {
+  };
+
+  reloadRules = (data, quite) => {
     var self = this;
     var selectedName = storage.get('activeRules', true) || data.current;
     var rulesList = [];
@@ -814,8 +824,9 @@ var Index = React.createClass({
     self.state.rules.reset(rulesList, rulesData);
     self.setState({});
     return changed;
-  },
-  reloadValues: function (data, quite) {
+  };
+
+  reloadValues = (data, quite) => {
     var self = this;
     var selectedName = storage.get('activeValues', true) || data.current;
     var valuesList = [];
@@ -832,11 +843,13 @@ var Index = React.createClass({
     self.state.values.reset(valuesList, valuesData);
     self.setState({});
     return changed;
-  },
-  reloadDataQuite: function () {
+  };
+
+  reloadDataQuite = () => {
     this.reloadData(true);
-  },
-  reloadData: function (quite) {
+  };
+
+  reloadData = (quite) => {
     var self = this;
     var dialog = $('.w-reload-data-tips').closest('.w-confirm-reload-dialog');
     var name = dialog.find('.w-reload-data-tips').attr('data-name');
@@ -868,8 +881,9 @@ var Index = React.createClass({
       dataCenter.values.list(handleResponse);
       events.trigger('reloadValuesRecycleBin');
     }
-  },
-  showReloadRules: function (force) {
+  };
+
+  showReloadRules = (force) => {
     if (this.rulesChanged && this.state.name === 'rules') {
       this.rulesChanged = false;
       var hasChanged = this.state.rules.hasChanged();
@@ -879,8 +893,9 @@ var Index = React.createClass({
         force
       );
     }
-  },
-  showReloadValues: function (force) {
+  };
+
+  showReloadValues = (force) => {
     if (this.valuesChanged && this.state.name === 'values') {
       this.valuesChanged = false;
       var hasChanged = this.state.values.hasChanged();
@@ -890,12 +905,14 @@ var Index = React.createClass({
         force
       );
     }
-  },
-  componentDidUpdate: function () {
+  };
+
+  componentDidUpdate() {
     this.showReloadRules();
     this.showReloadValues();
-  },
-  showReloadDialog: function (msg, existsUnsaved, force) {
+  }
+
+  showReloadDialog = (msg, existsUnsaved, force) => {
     var dialog = this.refs.confirmReload;
     clearTimeout(this.reloadTimer);
     var tips = $('.w-reload-data-tips');
@@ -910,8 +927,9 @@ var Index = React.createClass({
         '<p class="w-confim-reload-note">Note: There are unsaved changes.</p>';
     }
     tips.html(msg);
-  },
-  showTab: function () {
+  };
+
+  showTab = () => {
     var pageName = getPageName(this.state);
     if (!pageName || pageName.indexOf('rules') != -1) {
       this.showRules();
@@ -925,8 +943,9 @@ var Index = React.createClass({
       this.showNetwork();
     }
     storage.set('pageName', pageName || '');
-  },
-  componentDidMount: function () {
+  };
+
+  componentDidMount() {
     var self = this;
     var clipboard = new Clipboard('.w-copy-text');
     clipboard.on('error', function (e) {
@@ -1773,15 +1792,17 @@ var Index = React.createClass({
     self.handleDataUrl(dataUrl || util.getDataUrl());
     dataCenter.handleDataUrl = self.handleDataUrl;
     dataUrl = null;
-  },
-  shouldComponentUpdate: function (_, nextSate) {
+  }
+
+  shouldComponentUpdate(_, nextSate) {
     var name = this.state.name;
     if (name === 'network' && nextSate.name !== name) {
       this._isAtBottom = this.scrollerAtBottom && this.scrollerAtBottom();
     }
     return true;
-  },
-  handleDataUrl: function (url) {
+  }
+
+  handleDataUrl = (url) => {
     if (!isUrl(url)) {
       return;
     }
@@ -1791,8 +1812,9 @@ var Index = React.createClass({
         self.importAnySessions(data);
       }
     });
-  },
-  importAnySessions: function (data) {
+  };
+
+  importAnySessions = (data) => {
     if (data && !util.handleImportData(data)) {
       if (Array.isArray(data)) {
         dataCenter.addNetworkList(data);
@@ -1800,18 +1822,22 @@ var Index = React.createClass({
         this.importHarSessions(data);
       }
     }
-  },
-  donotShowAgain: function () {
+  };
+
+  donotShowAgain = () => {
     dataCenter.donotShowAgain();
-  },
-  hideUpdateTipsDialog: function () {
+  };
+
+  hideUpdateTipsDialog = () => {
     $(ReactDOM.findDOMNode(this.refs.showUpdateTipsDialog)).modal('hide');
-  },
-  getAllRulesText: function () {
+  };
+
+  getAllRulesText = () => {
     var text = ' ' + this.getAllRulesValue();
     return text.replace(/#[^\r\n]*[\r\n]/g, '\n');
-  },
-  getLogIdListFromRules: function () {
+  };
+
+  getLogIdListFromRules = () => {
     var text = this.getAllRulesText();
     if (
       (text = text.match(
@@ -1839,8 +1865,9 @@ var Index = React.createClass({
         });
     }
     return text;
-  },
-  getWeinreFromRules: function () {
+  };
+
+  getWeinreFromRules = () => {
     var values = this.state.values;
     var text = this.getAllRulesText();
     if ((text = text.match(/(?:^|\s)weinre:\/\/[^\s#]+(?:$|\s)/gm))) {
@@ -1873,8 +1900,9 @@ var Index = React.createClass({
     }
 
     return text;
-  },
-  getValuesFromRules: function () {
+  };
+
+  getValuesFromRules = () => {
     var text = ' ' + this.getAllRulesValue();
     if ((text = text.match(/\s(?:[\w-]+:\/\/)?\{[^\s#]+\}/g))) {
       text = text
@@ -1886,8 +1914,9 @@ var Index = React.createClass({
         });
     }
     return text;
-  },
-  getAllRulesValue: function () {
+  };
+
+  getAllRulesValue = () => {
     var result = [];
     var activeList = [];
     var selectedList = [];
@@ -1911,11 +1940,13 @@ var Index = React.createClass({
     });
 
     return activeList.concat(selectedList).concat(result).join('\r\n');
-  },
-  preventBlur: function (e) {
+  };
+
+  preventBlur = (e) => {
     e.target.nodeName != 'INPUT' && e.preventDefault();
-  },
-  startLoadData: function (init) {
+  };
+
+  startLoadData = (init) => {
     var self = this;
     if (self._updateNetwork) {
       if (init) {
@@ -1999,8 +2030,9 @@ var Index = React.createClass({
     }
 
     events.on('checkAtBottom', atBottom);
-  },
-  showPlugins: function (e) {
+  };
+
+  showPlugins = (e) => {
     if (this.state.name != 'plugins') {
       this.setMenuOptionsState();
       this.hidePluginsOptions();
@@ -2012,8 +2044,9 @@ var Index = React.createClass({
       name: 'plugins'
     });
     util.changePageName('plugins');
-  },
-  handleAction: function (type) {
+  };
+
+  handleAction = (type) => {
     if (type === 'top') {
       this.container[0].scrollTop = 0;
       return;
@@ -2035,8 +2068,9 @@ var Index = React.createClass({
     if (refresh) {
       return this.autoRefresh();
     }
-  },
-  showNetwork: function (e) {
+  };
+
+  showNetwork = (e) => {
     var self = this;
     if (self.state.name == 'network') {
       e && !self.state.showLeftMenu && self.showNetworkOptions();
@@ -2057,8 +2091,9 @@ var Index = React.createClass({
       }
     );
     util.changePageName('network');
-  },
-  showAccount: function () {
+  };
+
+  showAccount = () => {
     var self = this;
     if (self.state.name == 'account') {
       return;
@@ -2068,12 +2103,14 @@ var Index = React.createClass({
       hasAccount: true
     });
     util.changePageName('account');
-  },
-  signOut: function () {
+  };
+
+  signOut = () => {
     this.state.showAccount = false;
     this.showTab();
-  },
-  handleNetwork: function (item, e) {
+  };
+
+  handleNetwork = (item, e) => {
     var modal = this.state.network;
     if (item.id == 'removeAll') {
       this.clear();
@@ -2093,8 +2130,9 @@ var Index = React.createClass({
       this.toggleTreeView();
     }
     this.hideNetworkOptions();
-  },
-  importData: function (e) {
+  };
+
+  importData = (e) => {
     switch (this.state.name) {
     case 'network':
       this.importSessions(e);
@@ -2106,8 +2144,9 @@ var Index = React.createClass({
       this.importValues(e);
       break;
     }
-  },
-  exportData: function (e, curItem) {
+  };
+
+  exportData = (e, curItem) => {
     switch (this.state.name) {
     case 'network':
       var modal = this.state.network;
@@ -2130,8 +2169,9 @@ var Index = React.createClass({
       this.showAndActiveValues({ id: 'exportValues' });
       break;
     }
-  },
-  importSessions: function (e, data) {
+  };
+
+  importSessions = (e, data) => {
     var self = this;
     var shiftKey = (e && e.shiftKey) || (data && data.shiftKey);
     if (shiftKey) {
@@ -2144,8 +2184,9 @@ var Index = React.createClass({
       return;
     }
     ReactDOM.findDOMNode(self.refs.importSessions).click();
-  },
-  importSessionsFromUrl: function (url, byInput) {
+  };
+
+  importSessionsFromUrl = (url, byInput) => {
     if (!url) {
       return;
     }
@@ -2158,8 +2199,9 @@ var Index = React.createClass({
         self.importAnySessions(data);
       }
     });
-  },
-  importRemoteSessions: function (e) {
+  };
+
+  importRemoteSessions = (e) => {
     if (e && e.type !== 'click' && e.keyCode !== 13) {
       return;
     }
@@ -2167,8 +2209,9 @@ var Index = React.createClass({
     var input = ReactDOM.findDOMNode(self.refs.sessionsRemoteUrl);
     var url = checkUrl(input.value);
     self.importSessionsFromUrl(url, true);
-  },
-  importRules: function (e, data) {
+  };
+
+  importRules = (e, data) => {
     var self = this;
     var shiftKey = (e && e.shiftKey) || (data && data.shiftKey);
     if (shiftKey) {
@@ -2181,8 +2224,9 @@ var Index = React.createClass({
       return;
     }
     ReactDOM.findDOMNode(self.refs.importRules).click();
-  },
-  importRemoteRules: function (e) {
+  };
+
+  importRemoteRules = (e) => {
     if (e && e.type !== 'click' && e.keyCode !== 13) {
       return;
     }
@@ -2203,8 +2247,9 @@ var Index = React.createClass({
         self.handleImportRules(data);
       }
     });
-  },
-  importValues: function (e, data) {
+  };
+
+  importValues = (e, data) => {
     var self = this;
     var shiftKey = (e && e.shiftKey) || (data && data.shiftKey);
     if (shiftKey) {
@@ -2217,8 +2262,9 @@ var Index = React.createClass({
       return;
     }
     ReactDOM.findDOMNode(self.refs.importValues).click();
-  },
-  importRemoteValues: function (e) {
+  };
+
+  importRemoteValues = (e) => {
     if (e && e.type !== 'click' && e.keyCode !== 13) {
       return;
     }
@@ -2239,8 +2285,9 @@ var Index = React.createClass({
         self.handleImportValues(data);
       }
     });
-  },
-  _uploadRules: function (data, showResult) {
+  };
+
+  _uploadRules = (data, showResult) => {
     var self = this;
     dataCenter.upload.importRules(data, function (data, xhr) {
       if (!data) {
@@ -2252,8 +2299,9 @@ var Index = React.createClass({
         win.alert(data.em);
       }
     });
-  },
-  _uploadValues: function (data, showResult) {
+  };
+
+  _uploadValues = (data, showResult) => {
     var self = this;
     dataCenter.upload.importValues(data, function (data, xhr) {
       if (!data) {
@@ -2266,8 +2314,9 @@ var Index = React.createClass({
         win.alert(data.em);
       }
     });
-  },
-  handleImportRules: function (data) {
+  };
+
+  handleImportRules = (data) => {
     if (!data) {
       return;
     }
@@ -2277,15 +2326,17 @@ var Index = React.createClass({
     } else {
       this.uploadRules();
     }
-  },
-  handleImportValues: function (data) {
+  };
+
+  handleImportValues = (data) => {
     if (!data) {
       return;
     }
     this.valuesForm = getJsonForm(data, 'values');
     this.refs.confirmImportValues.show();
-  },
-  uploadRules: function (e) {
+  };
+
+  uploadRules = (e) => {
     var form = this.rulesForm;
     self.rulesForm = null;
     if (form) {
@@ -2295,8 +2346,9 @@ var Index = React.createClass({
       this._uploadRules(form);
       ReactDOM.findDOMNode(this.refs.importRules).value = '';
     }
-  },
-  uploadValues: function (e) {
+  };
+
+  uploadValues = (e) => {
     var form = this.valuesForm;
     self.valuesForm = null;
     if (form) {
@@ -2306,20 +2358,23 @@ var Index = React.createClass({
       this._uploadValues(form);
       ReactDOM.findDOMNode(this.refs.importValues).value = '';
     }
-  },
-  uploadRulesForm: function () {
+  };
+
+  uploadRulesForm = () => {
     var form = new FormData(
       ReactDOM.findDOMNode(this.refs.importRulesForm)
     );
     handleImportData(form.get('rules'), this.handleImportRules);
-  },
-  uploadValuesForm: function () {
+  };
+
+  uploadValuesForm = () => {
     var form = new FormData(
       ReactDOM.findDOMNode(this.refs.importValuesForm)
     );
     handleImportData(form.get('values'), this.handleImportValues);
-  },
-  showAndActiveRules: function (item, e) {
+  };
+
+  showAndActiveRules = (item, e) => {
     if (this.state.name === 'rules') {
       switch (item.id) {
       case 'exportRules':
@@ -2334,8 +2389,9 @@ var Index = React.createClass({
       this.showRules();
     }
     this.hideRulesOptions();
-  },
-  showRules: function (e) {
+  };
+
+  showRules = (e) => {
     if (this.state.name != 'rules') {
       this.setMenuOptionsState();
       this.hideRulesOptions();
@@ -2347,8 +2403,9 @@ var Index = React.createClass({
       name: 'rules'
     });
     util.changePageName('rules');
-  },
-  showAndActiveValues: function (item, e) {
+  };
+
+  showAndActiveValues = (item, e) => {
     var self = this;
     if (self.state.name === 'values' && item.id) {
       switch (item.id) {
@@ -2383,9 +2440,11 @@ var Index = React.createClass({
       this.showValues();
     }
     self.hideValuesOptions();
-  },
-  addValue: function () { },
-  showValues: function (e) {
+  };
+
+  addValue = () => { };
+
+  showValues = (e) => {
     if (this.state.name != 'values') {
       this.setMenuOptionsState();
       this.hideValuesOptions();
@@ -2397,70 +2456,82 @@ var Index = React.createClass({
       name: 'values'
     });
     util.changePageName('values');
-  },
-  showNetworkOptions: function () {
+  };
+
+  showNetworkOptions = () => {
     if (this.state.name == 'network') {
       this.setState({
         showNetworkOptions: true
       });
     }
-  },
-  hideNetworkOptions: function () {
+  };
+
+  hideNetworkOptions = () => {
     this.setState({
       showRemoveOptions: false,
       showAbortOptions: false,
       showNetworkOptions: false
     });
-  },
-  showRemoveOptions: function () {
+  };
+
+  showRemoveOptions = () => {
     this.setState({
       showRemoveOptions: true
     });
-  },
-  showAbortOptions: function () {
+  };
+
+  showAbortOptions = () => {
     var modal = this.state.network;
     var list = modal.getSelectedList();
     ABORT_OPTIONS[0].disabled = !list || !list.filter(util.canAbort).length;
     this.setState({
       showAbortOptions: true
     });
-  },
-  showCreateOptions: function () {
+  };
+
+  showCreateOptions = () => {
     this.setState({
       showCreateOptions: true
     });
-  },
-  hideCreateOptions: function () {
+  };
+
+  hideCreateOptions = () => {
     this.setState({
       showCreateOptions: false
     });
-  },
-  hideRemoveOptions: function () {
+  };
+
+  hideRemoveOptions = () => {
     this.setState({
       showRemoveOptions: false
     });
-  },
-  hideAbortOptions: function () {
+  };
+
+  hideAbortOptions = () => {
     this.setState({
       showAbortOptions: false
     });
-  },
-  showHelpOptions: function () {
+  };
+
+  showHelpOptions = () => {
     this.setState({
       showHelpOptions: true
     });
-  },
-  hideHelpOptions: function () {
+  };
+
+  hideHelpOptions = () => {
     this.setState({
       showHelpOptions: false
     });
-  },
-  showHasNewVersion: function (hasNewVersion) {
+  };
+
+  showHasNewVersion = (hasNewVersion) => {
     this.setState({
       hasNewVersion: hasNewVersion
     });
-  },
-  showRulesOptions: function (e) {
+  };
+
+  showRulesOptions = (e) => {
     var self = this;
     var rules = self.state.rules;
     var data = rules.data;
@@ -2481,13 +2552,15 @@ var Index = React.createClass({
       rulesOptions: rulesOptions,
       showRulesOptions: true
     });
-  },
-  hideRulesOptions: function () {
+  };
+
+  hideRulesOptions = () => {
     this.setState({
       showRulesOptions: false
     });
-  },
-  showValuesOptions: function (e) {
+  };
+
+  showValuesOptions = (e) => {
     var self = this;
     var valuesOptions;
     var valuesList = this.state.values.list;
@@ -2515,18 +2588,21 @@ var Index = React.createClass({
       valuesOptions: valuesOptions,
       showValuesOptions: true
     });
-  },
-  hideValuesOptions: function () {
+  };
+
+  hideValuesOptions = () => {
     this.setState({
       showValuesOptions: false
     });
-  },
-  showAndActivePlugins: function (option) {
+  };
+
+  showAndActivePlugins = (option) => {
     this.hidePluginsOptions();
     this.showPlugins();
     this.showPluginTab(option.name);
-  },
-  showPluginTab: function (name) {
+  };
+
+  showPluginTab = (name) => {
     var active = 'Home';
     var tabs = this.state.tabs || [];
     if (name && name != active) {
@@ -2563,18 +2639,21 @@ var Index = React.createClass({
       tabs: tabs
     });
     this.updatePluginTabInfo(tabs, active);
-  },
-  updatePluginTabInfo: function (tabs, active) {
+  };
+
+  updatePluginTabInfo = (tabs, active) => {
     tabs = tabs.map(function (tab) {
       return tab.name;
     });
     storage.set('activePluginTabList', JSON.stringify(tabs));
     active && storage.set('activePluginTabName', active);
-  },
-  activePluginTab: function (e) {
+  };
+
+  activePluginTab = (e) => {
     this.showPluginTab($(e.target).attr('data-name'));
-  },
-  closePluginTab: function (e) {
+  };
+
+  closePluginTab = (e) => {
     var name = $(e.target).attr('data-name');
     var tabs = this.state.tabs || [];
     for (var i = 0, len = tabs.length; i < len; i++) {
@@ -2592,26 +2671,30 @@ var Index = React.createClass({
         return;
       }
     }
-  },
-  showPluginsOptions: function (e) {
+  };
+
+  showPluginsOptions = (e) => {
     this.setState({
       showPluginsOptions: true
     });
-  },
-  hidePluginsOptions: function () {
+  };
+
+  hidePluginsOptions = () => {
     this.setState({
       showPluginsOptions: false
     });
-  },
-  showWeinreOptionsQuick: function (e) {
+  };
+
+  showWeinreOptionsQuick = (e) => {
     var list = this.getWeinreFromRules();
     if (!list || !list.length) {
       this.showAnonymousWeinre();
       return;
     }
     $(e.target).closest('div').addClass('w-menu-wrapper-show');
-  },
-  showWeinreOptions: function (e) {
+  };
+
+  showWeinreOptions = (e) => {
     var self = this;
     var list = (self.state.weinreOptions = self.getWeinreFromRules() || []);
     self.state.weinreOptions = util.unique(list).map(function (name) {
@@ -2623,13 +2706,15 @@ var Index = React.createClass({
     self.setState({
       showWeinreOptions: true
     });
-  },
-  hideWeinreOptions: function () {
+  };
+
+  hideWeinreOptions = () => {
     this.setState({
       showWeinreOptions: false
     });
-  },
-  setMenuOptionsState: function (name, callback) {
+  };
+
+  setMenuOptionsState = (name, callback) => {
     var state = {
       showCreateRules: false,
       showCreateValues: false,
@@ -2641,20 +2726,25 @@ var Index = React.createClass({
       state[name] = true;
     }
     this.setState(state, callback);
-  },
-  hideRulesInput: function () {
+  };
+
+  hideRulesInput = () => {
     this.setState({ showCreateRules: false });
-  },
-  hideValuesInput: function () {
+  };
+
+  hideValuesInput = () => {
     this.setState({ showCreateValues: false });
-  },
-  hideRenameRuleInput: function () {
+  };
+
+  hideRenameRuleInput = () => {
     this.setState({ showEditRules: false });
-  },
-  hideRenameValueInput: function () {
+  };
+
+  hideRenameValueInput = () => {
     this.setState({ showEditValues: false });
-  },
-  showCreateRules: function (_, group, focusItem) {
+  };
+
+  showCreateRules = (_, group, focusItem) => {
     var createRulesInput = ReactDOM.findDOMNode(this.refs.createRulesInput);
     this._curFocusRulesGroup = group;
     this._curFocusRulesItem = focusItem;
@@ -2666,8 +2756,9 @@ var Index = React.createClass({
         createRulesInput.focus();
       }
     );
-  },
-  showCreateValues: function (_, group, focusItem) {
+  };
+
+  showCreateValues = (_, group, focusItem) => {
     var createValuesInput = ReactDOM.findDOMNode(this.refs.createValuesInput);
     this._curFocusValuesGroup = group;
     this._curFocusValuesItem = focusItem;
@@ -2679,11 +2770,13 @@ var Index = React.createClass({
         createValuesInput.focus();
       }
     );
-  },
-  showHttpsSettingsDialog: function () {
+  };
+
+  showHttpsSettingsDialog = () => {
     $(ReactDOM.findDOMNode(this.refs.rootCADialog)).modal('show');
-  },
-  interceptHttpsConnects: function (e) {
+  };
+
+  interceptHttpsConnects = (e) => {
     var self = this;
     var checked = e.target.checked;
     dataCenter.interceptHttpsConnects(
@@ -2697,8 +2790,9 @@ var Index = React.createClass({
         self.setState({});
       }
     );
-  },
-  enableHttp2: function (e) {
+  };
+
+  enableHttp2 = (e) => {
     var self = this;
     if (!dataCenter.supportH2) {
       win.confirm(
@@ -2722,8 +2816,9 @@ var Index = React.createClass({
         self.setState({});
       }
     );
-  },
-  createRules: function (e) {
+  };
+
+  createRules = (e) => {
     if (e.keyCode != 13 && e.type != 'click') {
       return;
     }
@@ -2788,8 +2883,9 @@ var Index = React.createClass({
       }
     }
     );
-  },
-  createValues: function (e) {
+  };
+
+  createValues = (e) => {
     if (e.keyCode != 13 && e.type != 'click') {
       return;
     }
@@ -2859,8 +2955,9 @@ var Index = React.createClass({
         util.showSystemError(xhr);
       }
     });
-  },
-  showEditRules: function (item) {
+  };
+
+  showEditRules = (item) => {
     this.currentFocusRules = item;
     var modal = this.state.rules;
     var activeItem = item || modal.getActive();
@@ -2879,11 +2976,13 @@ var Index = React.createClass({
         editRulesInput.focus();
       }
     );
-  },
-  showEditValuesByDBClick: function (item) {
+  };
+
+  showEditValuesByDBClick = (item) => {
     !item.changed && this.showEditValues();
-  },
-  showEditValues: function (item) {
+  };
+
+  showEditValues = (item) => {
     this.currentFocusValues = item;
     var modal = this.state.values;
     var activeItem = item || modal.getActive();
@@ -2903,8 +3002,9 @@ var Index = React.createClass({
         editValuesInput.focus();
       }
     );
-  },
-  editRules: function (e) {
+  };
+
+  editRules = (e) => {
     if (e.keyCode != 13 && e.type != 'click') {
       return;
     }
@@ -2943,8 +3043,9 @@ var Index = React.createClass({
         }
       }
     );
-  },
-  editValues: function (e) {
+  };
+
+  editValues = (e) => {
     if (e.keyCode != 13 && e.type != 'click') {
       return;
     }
@@ -2984,28 +3085,34 @@ var Index = React.createClass({
         }
       }
     );
-  },
-  getActiveRuleName: function () {
+  };
+
+  getActiveRuleName = () => {
     var modal = this.state.rules;
     var activeItem = modal.getActive();
     return activeItem ? activeItem.name : '';
-  },
-  showAnonymousWeinre: function () {
+  };
+
+  showAnonymousWeinre = () => {
     this.openWeinre();
-  },
-  showWeinre: function (options) {
+  };
+
+  showWeinre = (options) => {
     this.openWeinre(options.name);
-  },
-  openWeinre: function (name) {
+  };
+
+  openWeinre = (name) => {
     window.open('weinre/client/#' + (name || 'anonymous'));
     this.setState({
       showWeinreOptions: false
     });
-  },
-  onClickRulesOption: function (item) {
+  };
+
+  onClickRulesOption = (item) => {
     item.selected ? this.unselectRules(item) : this.selectRules(item);
-  },
-  selectRules: function (item) {
+  };
+
+  selectRules = (item) => {
     if (util.isGroup(item.name)) {
       return;
     }
@@ -3047,12 +3154,14 @@ var Index = React.createClass({
       }
     );
     return false;
-  },
-  selectRulesByOptions: function (e) {
+  };
+
+  selectRulesByOptions = (e) => {
     var item = this.state.rules.data[$(e.target).attr('data-name')];
     this[e.target.checked ? 'selectRules' : 'unselectRules'](item);
-  },
-  unselectRules: function (item) {
+  };
+
+  unselectRules = (item) => {
     var self = this;
     dataCenter.rules[item.isDefault ? 'disableDefault' : 'unselect'](
       item,
@@ -3066,8 +3175,9 @@ var Index = React.createClass({
       }
     );
     return false;
-  },
-  reselectRules: function (data, autoUpdate) {
+  };
+
+  reselectRules = (data, autoUpdate) => {
     var self = this;
     self.state.rules.clearAllSelected();
     self.setSelected(
@@ -3079,8 +3189,9 @@ var Index = React.createClass({
     data.list.forEach(function (name) {
       self.setSelected(self.state.rules, name, true, autoUpdate);
     });
-  },
-  saveValues: function (item) {
+  };
+
+  saveValues = (item) => {
     if (!item.changed || util.isGroup(item.name)) {
       return;
     }
@@ -3095,8 +3206,9 @@ var Index = React.createClass({
       }
     });
     return false;
-  },
-  setSelected: function (modal, name, selected, autoUpdate) {
+  };
+
+  setSelected = (modal, name, selected, autoUpdate) => {
     if (modal.setSelected(name, selected)) {
       if (!autoUpdate) {
         modal.setChanged(name, false);
@@ -3105,23 +3217,26 @@ var Index = React.createClass({
         curSelectedName: name
       });
     }
-  },
-  replayCountChange: function (e) {
+  };
+
+  replayCountChange = (e) => {
     var count = e.target.value.replace(/^\s*0*|[^\d]+/, '');
     var replayCount = count.slice(0, 3);
     if (replayCount > MAX_REPLAY_COUNT) {
       replayCount = MAX_REPLAY_COUNT;
     }
     this.setState({ replayCount: replayCount });
-  },
-  clickReplay: function (e) {
+  };
+
+  clickReplay = (e) => {
     if (e.shiftKey) {
       events.trigger('replaySessions', [null, e.shiftKey]);
     } else {
       this.replay(e);
     }
-  },
-  replay: function (e, list, count) {
+  };
+
+  replay = (e, list, count) => {
     var modal = this.state.network;
     list = Array.isArray(list) ? list : modal.getSelectedList();
     if (!list || !list.length) {
@@ -3173,22 +3288,26 @@ var Index = React.createClass({
     } else if (this.autoRefresh) {
       this.autoRefresh();
     }
-  },
-  enableRecord: function () {
+  };
+
+  enableRecord = () => {
     this.refs.recordBtn.enable();
     events.trigger('changeRecordState');
-  },
-  composer: function () {
+  };
+
+  composer = () => {
     events.trigger('composer');
-  },
-  clear: function () {
+  };
+
+  clear = () => {
     var modal = this.state.network;
     this.setState({
       network: modal.clear(),
       showRemoveOptions: false
     });
-  },
-  removeRulesBatch: function (list) {
+  };
+
+  removeRulesBatch = (list) => {
     var self = this;
     dataCenter.rules.remove({ list: list }, function (data, xhr) {
       if (data && data.ec === 0) {
@@ -3211,8 +3330,9 @@ var Index = React.createClass({
       }
     });
     this.refs.deleteRulesDialog.hide();
-  },
-  removeValuesBatch: function (list) {
+  };
+
+  removeValuesBatch = (list) => {
     var self = this;
     dataCenter.values.remove({ list: list }, function (data, xhr) {
       if (data && data.ec === 0) {
@@ -3235,32 +3355,37 @@ var Index = React.createClass({
       }
     });
     this.refs.deleteValuesDialog.hide();
-  },
-  removeRules: function (item) {
+  };
+
+  removeRules = (item) => {
     var modal = this.state.rules;
     var activeItem = item || modal.getActive();
     if (activeItem && !activeItem.isDefault) {
       this.refs.deleteRulesDialog.show(activeItem.name);
     }
-  },
-  removeValues: function (item) {
+  };
+
+  removeValues = (item) => {
     var modal = this.state.values;
     var activeItem = item || modal.getActive();
     if (activeItem && !activeItem.isDefault) {
       this.refs.deleteValuesDialog.show(activeItem.name);
     }
-  },
-  setRulesActive: function (name, modal) {
+  };
+
+  setRulesActive = (name, modal) => {
     modal = modal || this.state.rules;
     storage.set('activeRules', name);
     modal.setActive(name);
-  },
-  setValuesActive: function (name, modal) {
+  };
+
+  setValuesActive = (name, modal) => {
     modal = modal || this.state.values;
     storage.set('activeValues', name);
     modal.setActive(name);
-  },
-  showRulesSettings: function () {
+  };
+
+  showRulesSettings = () => {
     var self = this;
     $(ReactDOM.findDOMNode(self.refs.rulesSettingsDialog)).modal('show');
     dataCenter.rules.accountRules(function (data, xhr) {
@@ -3270,24 +3395,28 @@ var Index = React.createClass({
         util.showSystemError(xhr);
       }
     });
-  },
-  showValuesSettings: function () {
+  };
+
+  showValuesSettings = () => {
     $(ReactDOM.findDOMNode(this.refs.valuesSettingsDialog)).modal('show');
-  },
-  toggleLeftMenu: function () {
+  };
+
+  toggleLeftMenu = () => {
     var showLeftMenu = !this.state.showLeftMenu;
     this.setState({
       showLeftMenu: showLeftMenu
     });
     storage.set('showLeftMenu', showLeftMenu ? 1 : '');
     events.trigger('editorResize');
-  },
-  handleCreate: function () {
+  };
+
+  handleCreate = () => {
     this.state.name == 'rules'
       ? this.showCreateRules()
       : this.showCreateValues();
-  },
-  saveRulesOrValues: function () {
+  };
+
+  saveRulesOrValues = () => {
     var self = this;
     var state = self.state;
     var list;
@@ -3313,8 +3442,9 @@ var Index = React.createClass({
         self.setState({});
       }
     }
-  },
-  onClickMenu: function (e) {
+  };
+
+  onClickMenu = (e) => {
     var target = $(e.target).closest('a');
     var self = this;
     var state = self.state;
@@ -3326,8 +3456,9 @@ var Index = React.createClass({
     } else if (target.hasClass('w-save-menu')) {
       self.saveRulesOrValues();
     }
-  },
-  showSettings: function (e) {
+  };
+
+  showSettings = (e) => {
     var pageName = this.state.name;
     if (pageName === 'rules') {
       this.showRulesSettings();
@@ -3338,77 +3469,89 @@ var Index = React.createClass({
       return;
     }
     this.refs.networkSettings.showDialog();
-  },
-  activeRules: function (item) {
+  };
+
+  activeRules = (item) => {
     storage.set('activeRules', item.name);
     this.setState({ activeRules: item });
-  },
-  activeValues: function (item) {
+  };
+
+  activeValues = (item) => {
     storage.set('activeValues', item.name);
     this.setState({ activeValues: item });
-  },
-  onRulesThemeChange: function (e) {
+  };
+
+  onRulesThemeChange = (e) => {
     var theme = e.target.value;
     storage.set('rulesTheme', theme);
     this.setState({
       rulesTheme: theme
     });
-  },
-  onValuesThemeChange: function (e) {
+  };
+
+  onValuesThemeChange = (e) => {
     var theme = e.target.value;
     storage.set('valuesTheme', theme);
     this.setState({
       valuesTheme: theme
     });
-  },
-  onRulesFontSizeChange: function (e) {
+  };
+
+  onRulesFontSizeChange = (e) => {
     var fontSize = e.target.value;
     storage.set('rulesFontSize', fontSize);
     this.setState({
       rulesFontSize: fontSize
     });
-  },
-  onValuesFontSizeChange: function (e) {
+  };
+
+  onValuesFontSizeChange = (e) => {
     var fontSize = e.target.value;
     storage.set('valuesFontSize', fontSize);
     this.setState({
       valuesFontSize: fontSize
     });
-  },
-  onRulesLineNumberChange: function (e) {
+  };
+
+  onRulesLineNumberChange = (e) => {
     var checked = e.target.checked;
     storage.set('showRulesLineNumbers', checked);
     this.setState({
       showRulesLineNumbers: checked
     });
-  },
-  onValuesLineNumberChange: function (e) {
+  };
+
+  onValuesLineNumberChange = (e) => {
     var checked = e.target.checked;
     storage.set('showValuesLineNumbers', checked);
     this.setState({
       showValuesLineNumbers: checked
     });
-  },
-  showFoldGutter: function (e) {
+  };
+
+  showFoldGutter = (e) => {
     var checked = e.target.checked;
     storage.set('foldGutter', checked ? '1' : '');
     this.setState({ foldGutter: checked });
-  },
-  onRulesLineWrappingChange: function (e) {
+  };
+
+  onRulesLineWrappingChange = (e) => {
     var checked = e.target.checked;
     storage.set('autoRulesLineWrapping', checked ? 1 : '');
     this.setState({
       autoRulesLineWrapping: checked
     });
-  },
-  onValuesLineWrappingChange: function (e) {
+  };
+
+  onValuesLineWrappingChange = (e) => {
     var checked = e.target.checked;
     storage.set('autoValuesLineWrapping', checked ? 1 : '');
     this.setState({
       autoValuesLineWrapping: checked
     });
-  },
-  confirmDisableAllRules: function (e) {
+  };
+
+  confirmDisableAllRules = (e) => {
     var self = this;
     var state = self.state;
     if (state.disabledAllRules) {
@@ -3419,8 +3562,9 @@ var Index = React.createClass({
       });
     }
     e && e.preventDefault();
-  },
-  confirmDisableAllPlugins: function (e) {
+  };
+
+  confirmDisableAllPlugins = (e) => {
     var self = this;
     var state = self.state;
     if (state.disabledAllPlugins) {
@@ -3431,8 +3575,9 @@ var Index = React.createClass({
       });
     }
     e && e.preventDefault();
-  },
-  disableAllRules: function (e, callback) {
+  };
+
+  disableAllRules = (e, callback) => {
     var self = this;
     var state = self.state;
     var checked = !state.disabledAllRules;
@@ -3451,8 +3596,9 @@ var Index = React.createClass({
       }
     );
     e && e.preventDefault();
-  },
-  disableAllPlugins: function (e, callback) {
+  };
+
+  disableAllPlugins = (e, callback) => {
     var self = this;
     var state = self.state;
     var checked = !state.disabledAllPlugins;
@@ -3472,8 +3618,9 @@ var Index = React.createClass({
       }
     );
     e && e.preventDefault();
-  },
-  setPluginState: function (name, disabled) {
+  };
+
+  setPluginState = (name, disabled) => {
     var self = this;
     if (self.state.ndp) {
       return message.warn('Not allowed disable plugins.');
@@ -3494,12 +3641,14 @@ var Index = React.createClass({
         }
       }
     );
-  },
-  disablePlugin: function (e) {
+  };
+
+  disablePlugin = (e) => {
     var target = e.target;
     this.setPluginState($(target).attr('data-name'), !target.checked);
-  },
-  abort: function (list) {
+  };
+
+  abort = (list) => {
     if (!Array.isArray(list)) {
       var modal = this.state.network;
       list = modal.getSelectedList();
@@ -3515,8 +3664,9 @@ var Index = React.createClass({
       }
     }
     this.hideAbortOptions();
-  },
-  allowMultipleChoice: function (e) {
+  };
+
+  allowMultipleChoice = (e) => {
     var self = this;
     var checked = e.target.checked;
     dataCenter.rules.allowMultipleChoice(
@@ -3531,8 +3681,9 @@ var Index = React.createClass({
         }
       }
     );
-  },
-  enableBackRulesFirst: function (e) {
+  };
+
+  enableBackRulesFirst = (e) => {
     var self = this;
     var checked = e.target.checked;
     dataCenter.rules.enableBackRulesFirst(
@@ -3548,28 +3699,32 @@ var Index = React.createClass({
         }
       }
     );
-  },
-  reinstallAllPlugins: function () {
+  };
+
+  reinstallAllPlugins = () => {
     if (dataCenter.enablePluginMgr) {
       events.trigger('installPlugins');
     } else {
       events.trigger('updateAllPlugins', 'reinstallAllPlugins');
     }
-  },
-  chooseFileType: function (e) {
+  };
+
+  chooseFileType = (e) => {
     var value = e.target.value;
     storage.set('exportFileType', value);
     this.setState({
       exportFileType: value
     });
-  },
-  uploadSessions: function () {
+  };
+
+  uploadSessions = () => {
     this.uploadSessionsForm(
       new FormData(ReactDOM.findDOMNode(this.refs.importSessionsForm))
     );
     ReactDOM.findDOMNode(this.refs.importSessions).value = '';
-  },
-  importHarSessions: function (result) {
+  };
+
+  importHarSessions = (result) => {
     if (!result || typeof result !== 'object') {
       return;
     }
@@ -3689,8 +3844,9 @@ var Index = React.createClass({
       sessions.push(session);
     });
     dataCenter.addNetworkList(sessions);
-  },
-  uploadSessionsForm: function (data) {
+  };
+
+  uploadSessionsForm = (data) => {
     var file = data.get('importSessions');
     if (!file || !/\.(txt|json|saz|har)$/i.test(file.name)) {
       return win.alert('Only supports .txt, .json, .saz or .har file.');
@@ -3717,8 +3873,9 @@ var Index = React.createClass({
       return;
     }
     dataCenter.upload.importSessions(data, dataCenter.addNetworkList);
-  },
-  getExportSessions: function () {
+  };
+
+  getExportSessions = () => {
     var modal = this.state.network;
     var sessions = this.currentFoucsItem;
     this.currentFoucsItem = null;
@@ -3726,8 +3883,9 @@ var Index = React.createClass({
       sessions = modal.getSelectedList();
     }
     return sessions;
-  },
-  exportSessions: function (type, name, sessions) {
+  };
+
+  exportSessions = (type, name, sessions) => {
     sessions = sessions || this.getExportSessions();
     if (!sessions || !sessions.length) {
       return;
@@ -3760,8 +3918,9 @@ var Index = React.createClass({
       '  '
     );
     form.submit();
-  },
-  exportBySave: function (e) {
+  };
+
+  exportBySave = (e) => {
     if (e && e.type !== 'click' && e.keyCode !== 13) {
       return;
     }
@@ -3770,21 +3929,24 @@ var Index = React.createClass({
     input.value = '';
     this.exportSessions(this.state.exportFileType, name);
     $(ReactDOM.findDOMNode(this.refs.chooseFileType)).modal('hide');
-  },
-  replayRepeat: function (e) {
+  };
+
+  replayRepeat = (e) => {
     if (e && e.type !== 'click' && e.keyCode !== 13) {
       return;
     }
     this.refs.setReplayCount.hide();
     this.replay('', this.replayList, this.state.replayCount);
     events.trigger('focusNetworkList');
-  },
-  showAboutDialog: function (e) {
+  };
+
+  showAboutDialog = (e) => {
     if ($(e.target).closest('.w-menu-enable').length) {
       this.refs.aboutDialog.showAboutInfo();
     }
-  },
-  showCustomCertsInfo: function () {
+  };
+
+  showCustomCertsInfo = () => {
     var self = this;
     if (self.loadingCerts) {
       return;
@@ -3798,8 +3960,9 @@ var Index = React.createClass({
       }
       self.refs.certsInfoDialog.show(data.certs, data.dir);
     });
-  },
-  onTopContextMenu: function (e) {
+  };
+
+  onTopContextMenu = (e) => {
     if (this.getTabName() !== 'network') {
       return;
     }
@@ -3807,8 +3970,9 @@ var Index = React.createClass({
     var data = util.getMenuPosition(e, 110, 100);
     data.list = TOP_BAR_MENUS;
     this.refs.topContextMenu.show(data);
-  },
-  onContextMenu: function (e) {
+  };
+
+  onContextMenu = (e) => {
     var count = 0;
     var list = LEFT_BAR_MENUS;
     if (list[2].hide) {
@@ -3843,8 +4007,9 @@ var Index = React.createClass({
       this.refs.contextMenu.show(data);
     }
     e.preventDefault();
-  },
-  onClickTopMenu: function (action) {
+  };
+
+  onClickTopMenu = (action) => {
     switch (action) {
     case 'top':
       if (this.container) {
@@ -3860,8 +4025,9 @@ var Index = React.createClass({
       }
       break;
     }
-  },
-  onClickContextMenu: function (action) {
+  };
+
+  onClickContextMenu = (action) => {
     var self = this;
     var state = self.state;
     var list = LEFT_BAR_MENUS;
@@ -3890,29 +4056,33 @@ var Index = React.createClass({
       return;
     }
     this.refs.contextMenu.show({});
-  },
-  forceShowLeftMenu: function () {
+  };
+
+  forceShowLeftMenu = () => {
     var self = this;
     clearTimeout(self.hideTimer);
     clearTimeout(self.showTimer);
     self.showTimer = setTimeout(function () {
       self.setState({ forceShowLeftMenu: true });
     }, 200);
-  },
-  selectCAType: function (e) {
+  };
+
+  selectCAType = (e) => {
     var caType = getCAType(e.target.value);
     this.setState({ caType: caType });
     storage.set('caType', caType);
-  },
-  forceHideLeftMenu: function () {
+  };
+
+  forceHideLeftMenu = () => {
     var self = this;
     clearTimeout(self.hideTimer);
     clearTimeout(self.showTimer);
     self.hideTimer = setTimeout(function () {
       self.setState({ forceShowLeftMenu: false });
     }, 500);
-  },
-  updateMenuView: function (state) {
+  };
+
+  updateMenuView = (state) => {
     var opt = state.networkOptions[state.networkOptions.length - 1];
     if (state.network.isTreeView) {
       opt.icon = 'globe';
@@ -3922,8 +4092,9 @@ var Index = React.createClass({
       opt.name = 'Show Tree View';
     }
     return state;
-  },
-  toggleTreeView: function () {
+  };
+
+  toggleTreeView = () => {
     var self = this;
     var modal = self.state.network;
     modal.setTreeView(!modal.isTreeView);
@@ -3933,13 +4104,15 @@ var Index = React.createClass({
         self.autoRefresh && self.autoRefresh();
       }
     });
-  },
-  toggleTreeViewByIcon: function () {
+  };
+
+  toggleTreeViewByIcon = () => {
     if (this.getTabName() == 'network') {
       this.toggleTreeView();
     }
-  },
-  download: function (data) {
+  };
+
+  download = (data) => {
     if (!data || !(util.isString(data.content) ||
       util.isString(data.value) || util.isString(data.base64))) {
       return;
@@ -3949,8 +4122,9 @@ var Index = React.createClass({
     ReactDOM.findDOMNode(this.refs.dataType).value = base64 ? 'rawBase64' : '';
     ReactDOM.findDOMNode(this.refs.content).value = base64 || util.getString(data.value || data.content);
     ReactDOM.findDOMNode(this.refs.downloadForm).submit();
-  },
-  getTabName: function () {
+  };
+
+  getTabName = () => {
     var state = this.state;
     var rulesMode = state.rulesMode;
     var pluginsMode = state.pluginsMode;
@@ -3970,11 +4144,13 @@ var Index = React.createClass({
       name = name !== 'plugins' ? 'network' : name;
     }
     return name || 'network';
-  },
-  isHideRules: function () {
+  };
+
+  isHideRules = () => {
     return this.state.networkMode || this.state.pluginsMode;
-  },
-  render: function () {
+  };
+
+  render() {
     var state = this.state;
     var networkMode = state.networkMode;
     var rulesMode = state.rulesMode;
@@ -5410,7 +5586,8 @@ var Index = React.createClass({
       </div>
     );
   }
-});
+}
+
 dataCenter.getInitialData(function (data) {
   const root = ReactDOM.createRoot(document.getElementById('root'));
   root.render(

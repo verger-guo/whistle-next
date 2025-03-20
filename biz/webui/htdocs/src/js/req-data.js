@@ -123,8 +123,8 @@ var getFocusItemList = function (curItem) {
   return [curItem];
 };
 
-var Spinner = React.createClass({
-  render: function () {
+class Spinner extends React.Component {
+  render() {
     var order = this.props.order;
     var desc = order == 'desc';
     if (!desc && order != 'asc') {
@@ -147,7 +147,7 @@ var Spinner = React.createClass({
       </div>
     );
   }
-});
+}
 
 function getColStyle(col, style) {
   style = style ? $.extend({}, style) : {};
@@ -295,8 +295,8 @@ function removeHighlight(elem) {
   elem.removeClass('highlight');
 }
 
-var Row = React.createClass({
-  render: function () {
+class Row extends React.Component {
+  render() {
     var p = this.props;
     var order = p.order;
     var notQuery = p.notQuery;
@@ -361,19 +361,22 @@ var Row = React.createClass({
       </table>
     );
   }
-});
+}
 
-var ReqData = React.createClass({
-  getInitialState: function () {
+class ReqData extends React.Component {
+  constructor(props, context) {
+    super(props, context);
     var dragger = settings.getDragger();
     dragger.onDrop = dragger.onDrop.bind(this);
-    return {
+
+    this.state = {
       draggable: true,
       columns: settings.getSelectedColumns(),
       dragger: dragger
     };
-  },
-  componentDidUpdate: function () {
+  }
+
+  componentDidUpdate() {
     this.isShownBtn && events.trigger('checkAtBottom');
     if (storage.get('disabledHNR') === '1') {
       return;
@@ -489,8 +492,9 @@ var ReqData = React.createClass({
         lightList.forEach(removeHighlight);
       }, 800);
     }
-  },
-  componentDidMount: function () {
+  }
+
+  componentDidMount() {
     var self = this;
     var timer;
     events.on('hashFilterChange', function () {
@@ -642,23 +646,26 @@ var ReqData = React.createClass({
         hideBackBtn();
       }
     });
-  },
-  onDragStart: function (e) {
+  }
+
+  onDragStart = (e) => {
     var target = $(e.target).closest('.w-req-data-item');
     var dataId = target.attr('data-id');
     if (dataId) {
       util.showIFrameMask(true);
       e.dataTransfer.setData('reqDataId', dataId);
     }
-  },
-  getSelectedRows: function (item) {
+  };
+
+  getSelectedRows = (item) => {
     var active = this.props.modal.getActive();
     if (!active || item === active) {
       return;
     }
     return [active, item];
-  },
-  onClick: function (e, item, hm) {
+  };
+
+  onClick = (e, item, hm) => {
     if (!item) {
       return;
     }
@@ -688,8 +695,9 @@ var ReqData = React.createClass({
     hm && self.scrollToRow(item);
     events.trigger('networkStateChange');
     events.trigger('selectedSessionChange', item);
-  },
-  setSelected: function (item, unselect) {
+  };
+
+  setSelected = (item, unselect) => {
     if (item.selected) {
       this.$content.find('tr[data-id=' + item.id + ']').addClass('w-selected');
     } else if (unselect) {
@@ -697,31 +705,36 @@ var ReqData = React.createClass({
         .find('tr[data-id=' + item.id + ']')
         .removeClass('w-selected');
     }
-  },
-  clearSelection: function () {
+  };
+
+  clearSelection = () => {
     this.props.modal.clearSelection();
-  },
-  getFilterList: function () {
+  };
+
+  getFilterList = () => {
     var settings = dataCenter.getFilterText();
     if (settings.disabledExcludeText) {
       return [];
     }
     return settings.excludeText.trim().split(/\s+/g);
-  },
-  updateFilter: function (str) {
+  };
+
+  updateFilter = (str) => {
     var settings = dataCenter.getFilterText();
     settings.excludeText = str;
     settings.disabledExcludeText = false;
     dataCenter.setFilterText(settings);
     events.trigger('filterChanged');
-  },
-  getActiveList: function (curItem) {
+  };
+
+  getActiveList = (curItem) => {
     if (!curItem.selected) {
       return [curItem];
     }
     return this.props.modal.getSelectedList();
-  },
-  removeAllSuchHost: function (item, justRemove) {
+  };
+
+  removeAllSuchHost = (item, justRemove) => {
     var hostList = [];
     var list = this.getActiveList(item);
     list.forEach(function (item) {
@@ -742,13 +755,15 @@ var ReqData = React.createClass({
       this.updateFilter(filterList.join('\n'));
     }
     events.trigger('updateGlobal');
-  },
-  removeTreeNode: function (treeId, others) {
+  };
+
+  removeTreeNode = (treeId, others) => {
     if (this.props.modal.removeTreeNode(treeId, others)) {
       events.trigger('updateGlobal');
     }
-  },
-  removeAllSuchURL: function (item, justRemove) {
+  };
+
+  removeAllSuchURL = (item, justRemove) => {
     var urlList = [];
     var list = this.getActiveList(item);
     list.forEach(function (item) {
@@ -770,19 +785,22 @@ var ReqData = React.createClass({
       this.updateFilter(filterList.join('\n'));
     }
     events.trigger('updateGlobal');
-  },
-  triggerActiveItem: function (item) {
+  };
+
+  triggerActiveItem = (item) => {
     this.onClick('', item, true);
     events.trigger('networkStateChange');
-  },
-  onClickHeadMenu: function(action) {
+  };
+
+  onClickHeadMenu = (action) => {
     var col = this.curHeadCol;
     if (col) {
       settings.setWidth(col.name, action);
       this.setState({columns: settings.getSelectedColumns()});
     }
-  },
-  onClickContextMenu: function (action, e, parentAction, name) {
+  };
+
+  onClickContextMenu = (action, e, parentAction, name) => {
     var self = this;
     var item = self.currentFocusItem;
     var modal = self.props.modal;
@@ -921,8 +939,9 @@ var ReqData = React.createClass({
       events.trigger('showMockDialog', {item: item});
       break;
     }
-  },
-  onHeadCtxMenu: function(e) {
+  };
+
+  onHeadCtxMenu = (e) => {
     e.preventDefault();
     var name = $(e.target).closest('th').attr('data-name');
     var col = settings.getColumn(name);
@@ -936,8 +955,9 @@ var ReqData = React.createClass({
     data.radio = true;
     data.className = 'w-ctx-radio-list';
     this.refs.headContextMenu.show(data);
-  },
-  onContextMenu: function (e) {
+  };
+
+  onContextMenu = (e) => {
     var target = $(e.target);
     var nodeName =  target.prop('nodeName');
     var el = target.closest('.w-req-data-item');
@@ -1132,11 +1152,13 @@ var ReqData = React.createClass({
     data.list = contextMenuList;
     data.className = data.marginRight < 360 ? 'w-ctx-menu-left' : '';
     this.refs.contextMenu.show(data);
-  },
-  updateList: function () {
+  };
+
+  updateList = () => {
     this.refs.content.refs.list.forceUpdateGrid();
-  },
-  onFilterChange: function (keyword) {
+  };
+
+  onFilterChange = (keyword) => {
     var self = this;
     var filterBody = BODY_FILTER.test(keyword);
     clearTimeout(self.networkStateChangeTimer);
@@ -1146,20 +1168,23 @@ var ReqData = React.createClass({
       self.setState({ filterText: keyword }, self.updateList);
       events.trigger('networkStateChange');
     }, 600);
-  },
-  onFilterKeyDown: function (e) {
+  };
+
+  onFilterKeyDown = (e) => {
     if (e.keyCode !== 13 || !CMD_RE.test(e.target.value)) {
       return;
     }
     dataCenter.setDumpCount(parseInt(RegExp.$1, 10));
     this.props.modal.clear();
     this.refs.filterInput.clearFilterText();
-  },
-  autoRefresh: function () {
+  };
+
+  autoRefresh = () => {
     this.container.find('.ReactVirtualized__Grid:first')[0].scrollTop = 100000000;
     this.hideBackBtn();
-  },
-  orderBy: function (e) {
+  };
+
+  orderBy = (e) => {
     var target = this.willResort && $(e.target).closest('th')[0];
     if (!target) {
       return;
@@ -1193,14 +1218,17 @@ var ReqData = React.createClass({
     });
     this.props.modal.setSortColumns(sortColumns);
     this.setState({});
-  },
-  onColumnsResort: function () {
+  };
+
+  onColumnsResort = () => {
     this.setState({ columns: settings.getSelectedColumns() });
-  },
-  onMouseDown: function (e) {
+  };
+
+  onMouseDown = (e) => {
     this.willResort = e.target.className !== 'w-header-drag-block';
-  },
-  onReplay: function (e) {
+  };
+
+  onReplay = (e) => {
     if (!e.metaKey && !e.ctrlKey) {
       return;
     }
@@ -1213,8 +1241,9 @@ var ReqData = React.createClass({
       e.preventDefault();
       events.trigger('composer');
     }
-  },
-  renderColumn: function (col) {
+  };
+
+  renderColumn = (col) => {
     var name = col.name;
     var style = getColStyle(col);
     if (columnState[name]) {
@@ -1241,8 +1270,9 @@ var ReqData = React.createClass({
         <Spinner order={columnState[name]} />
       </th>
     );
-  },
-  scrollToRow: function (target, count) {
+  };
+
+  scrollToRow = (target, count) => {
     if (target && (target.id || (target.data && target.data.id))) {
       var index = this.getVisibleList().indexOf(target);
       if (index === -1) {
@@ -1254,16 +1284,18 @@ var ReqData = React.createClass({
       this.refs.content.refs.list.scrollToRow(target);
     } catch (e) {}
     this.container.focus();
-  },
-  getTreeNode: function (e) {
+  };
+
+  getTreeNode = (e) => {
     var modal = this.props.modal;
     if (typeof e === 'string') {
       return modal.getTreeNode(e);
     }
     var elem = $(e.target).closest('.w-req-data-item');
     return modal.getTreeNode(elem.attr('data-tree'));
-  },
-  toggleNode: function (e) {
+  };
+
+  toggleNode = (e) => {
     var node = this.getTreeNode(e);
     if (node) {
       if (node.expand) {
@@ -1273,8 +1305,9 @@ var ReqData = React.createClass({
       }
       this.setState({});
     }
-  },
-  expandAll: function (e) {
+  };
+
+  expandAll = (e) => {
     if (!e) {
       var root = this.props.modal.getTree();
       root.children.forEach(util.expandAll);
@@ -1285,8 +1318,9 @@ var ReqData = React.createClass({
       util.expandAll(node);
       this.setState({});
     }
-  },
-  collapseAll: function (e) {
+  };
+
+  collapseAll = (e) => {
     if (!e) {
       var root = this.props.modal.getTree();
       root.children.forEach(util.collapseAll);
@@ -1297,8 +1331,9 @@ var ReqData = React.createClass({
       util.collapseAll(node);
       this.setState({});
     }
-  },
-  renderTreeNode: function (item, options) {
+  };
+
+  renderTreeNode = (item, options) => {
     var draggable = this.state.draggable;
     var style = options.style;
     var leaf = item.data;
@@ -1331,17 +1366,20 @@ var ReqData = React.createClass({
         {value.length > 320 ? value.substring(0, 320) + '...' : value}
       </tr>
     );
-  },
-  enableRecord: function () {
+  };
+
+  enableRecord = () => {
     events.trigger('enableRecord');
-  },
-  getVisibleList: function () {
+  };
+
+  getVisibleList = () => {
     var modal = this.props.modal;
     return modal.isTreeView
       ? modal.getTree().list.filter(isVisibleInTree)
       : modal.getList().filter(isVisible);
-  },
-  render: function () {
+  };
+
+  render() {
     var self = this;
     var state = this.state;
     var modal = self.props.modal;
@@ -1453,6 +1491,6 @@ var ReqData = React.createClass({
       </div>
     );
   }
-});
+}
 
 module.exports = ReqData;

@@ -13,11 +13,10 @@ function getCgiUrl(moduleName, url) {
   return pluginName + '/' + url;
 }
 
-var SyncDialog = React.createClass({
-  getInitialState: function () {
-    return {};
-  },
-  show: function (plugin, rulesModal, valuesModal, cb) {
+class SyncDialog extends React.Component {
+  state = {};
+
+  show = (plugin, rulesModal, valuesModal, cb) => {
     var self = this;
     self.rulesModal = rulesModal;
     self.valuesModal = valuesModal;
@@ -33,8 +32,9 @@ var SyncDialog = React.createClass({
         self.refs.syncDialog.show();
       });
     }
-  },
-  _syncRules: function(history) {
+  };
+
+  _syncRules = (history) => {
     var self = this;
     var rulesUrl = self.state.rulesUrl;
     if (self.loadingRules || !util.isString(rulesUrl)) {
@@ -57,8 +57,9 @@ var SyncDialog = React.createClass({
       self.refs.kvDialog.show(data, self.rulesModal, self.valuesModal, false, history);
     });
     self.setState({});
-  },
-  _syncValues: function (history) {
+  };
+
+  _syncValues = (history) => {
     var self = this;
     var valuesUrl = self.state.valuesUrl;
     if (self.loadingValues || !util.isString(valuesUrl)) {
@@ -81,21 +82,25 @@ var SyncDialog = React.createClass({
       self.refs.kvDialog.show(data, self.rulesModal, self.valuesModal, true, history);
     });
     self.setState({});
-  },
-  syncRules: function () {
+  };
+
+  syncRules = () => {
     this._syncRules(this.plugin.selectedRulesHistory);
-  },
-  syncValues: function () {
+  };
+
+  syncValues = () => {
     this._syncValues(this.plugin.selectedValuesHistory);
-  },
-  onHistoryChange: function(history, isValues) {
+  };
+
+  onHistoryChange = (history, isValues) => {
     if (isValues) {
       this._syncValues(history);
     } else {
       this._syncRules(history);
     }
-  },
-  render: function () {
+  };
+
+  render() {
     var state = this.state;
     return (
       <Dialog ref="syncDialog" wstyle="w-sync-dialog">
@@ -132,24 +137,28 @@ var SyncDialog = React.createClass({
       </Dialog>
     );
   }
-});
+}
 
-var SyncDialogWrap = React.createClass({
-  shouldComponentUpdate: function () {
+class SyncDialogWrap extends React.Component {
+  shouldComponentUpdate() {
     return false;
-  },
-  show: function (plugin, rulesModal, valuesModal, cb) {
+  }
+
+  show = (plugin, rulesModal, valuesModal, cb) => {
     this.refs.syncDialog.show(plugin, rulesModal, valuesModal, cb);
-  },
-  syncRules: function() {
+  };
+
+  syncRules = () => {
     this.refs.syncDialog.syncRules();
-  },
-  syncValues: function() {
+  };
+
+  syncValues = () => {
     this.refs.syncDialog.syncValues();
-  },
-  render: function () {
+  };
+
+  render() {
     return <SyncDialog ref="syncDialog" />;
   }
-});
+}
 
 module.exports = SyncDialogWrap;

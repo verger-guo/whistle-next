@@ -15,39 +15,38 @@ var win = require('./win');
 var MAX_COUNT = dataCenter.MAX_LOG_LENGTH;
 var MAX_FILE_SIZE = 1024 * 1024 * 2;
 
-var ServerLog = React.createClass({
-  getInitialState: function () {
-    return {
-      scrollToBottom: true,
-      levels: [
-        {
-          value: '',
-          text: 'All levels'
-        },
-        {
-          value: 'debug',
-          text: 'Debug'
-        },
-        {
-          value: 'info',
-          text: 'Info/Log'
-        },
-        {
-          value: 'warn',
-          text: 'Warn'
-        },
-        {
-          value: 'error',
-          text: 'Error'
-        },
-        {
-          value: 'fatal',
-          text: 'Fatal'
-        }
-      ]
-    };
-  },
-  componentDidMount: function () {
+class ServerLog extends React.Component {
+  state = {
+    scrollToBottom: true,
+    levels: [
+      {
+        value: '',
+        text: 'All levels'
+      },
+      {
+        value: 'debug',
+        text: 'Debug'
+      },
+      {
+        value: 'info',
+        text: 'Info/Log'
+      },
+      {
+        value: 'warn',
+        text: 'Warn'
+      },
+      {
+        value: 'error',
+        text: 'Error'
+      },
+      {
+        value: 'fatal',
+        text: 'Fatal'
+      }
+    ]
+  };
+
+  componentDidMount() {
     var self = this;
     var svrContainer = (this.container = ReactDOM.findDOMNode(
       self.refs.svrContainer
@@ -114,24 +113,29 @@ var ServerLog = React.createClass({
         }, 2000);
       }
     });
-  },
-  clearLogs: function () {
+  }
+
+  clearLogs = () => {
     dataCenter.clearedSvrLogs = true;
     dataCenter.clearSvgLogList();
     this.setState({ logs: [] });
-  },
-  stopAutoRefresh: function () {
+  };
+
+  stopAutoRefresh = () => {
     if (util.scrollAtBottom(this.container, this.content)) {
       this.container.scrollTop = this.container.scrollTop - 10;
     }
-  },
-  scrollTop: function () {
+  };
+
+  scrollTop = () => {
     this.container.scrollTop = 0;
-  },
-  autoRefresh: function () {
+  };
+
+  autoRefresh = () => {
     this.container.scrollTop = 10000000;
-  },
-  shouldComponentUpdate: function (nextProps) {
+  };
+
+  shouldComponentUpdate(nextProps) {
     var hide = util.getBoolean(this.props.hide);
     var toggleHide = hide != util.getBoolean(nextProps.hide);
     if (toggleHide || !hide) {
@@ -145,13 +149,15 @@ var ServerLog = React.createClass({
       return true;
     }
     return false;
-  },
-  componentDidUpdate: function () {
+  }
+
+  componentDidUpdate() {
     if (!this.props.hide && this.state.scrollToBottom) {
       this.container.scrollTop = 10000000;
     }
-  },
-  onServerFilterChange: function (keyword) {
+  }
+
+  onServerFilterChange = (keyword) => {
     var self = this;
     keyword = keyword.trim();
     var serverKeyword = util.parseKeyword(keyword);
@@ -167,8 +173,9 @@ var ServerLog = React.createClass({
       self.filterTimer = null;
       self.setState({});
     }, 500);
-  },
-  showNameInput: function (e) {
+  };
+
+  showNameInput = (e) => {
     var self = this;
     self.setState(
       {
@@ -178,8 +185,9 @@ var ServerLog = React.createClass({
         ReactDOM.findDOMNode(self.refs.nameInput).focus();
       }
     );
-  },
-  download: function () {
+  };
+
+  download = () => {
     var target = ReactDOM.findDOMNode(this.refs.nameInput);
     var name = target.value.trim();
     var logs = [];
@@ -202,20 +210,24 @@ var ServerLog = React.createClass({
     );
     ReactDOM.findDOMNode(this.refs.downloadForm).submit();
     this.hideNameInput();
-  },
-  submit: function (e) {
+  };
+
+  submit = (e) => {
     if (e.keyCode !== 13 && e.type != 'click') {
       return;
     }
     this.download();
-  },
-  selectFile: function () {
+  };
+
+  selectFile = () => {
     ReactDOM.findDOMNode(this.refs.importData).click();
-  },
-  changeLevel: function (option) {
+  };
+
+  changeLevel = (option) => {
     this.setState({ level: option.value });
-  },
-  importData: function () {
+  };
+
+  importData = () => {
     var form = new FormData(ReactDOM.findDOMNode(this.refs.importDataForm));
     var file = form.get('importData');
     if (!file || !/\.log$/i.test(file.name)) {
@@ -229,14 +241,17 @@ var ServerLog = React.createClass({
       logs && events.trigger('uploadLogs', { logs: logs });
     });
     ReactDOM.findDOMNode(this.refs.importData).value = '';
-  },
-  preventBlur: function (e) {
+  };
+
+  preventBlur = (e) => {
     e.target.nodeName != 'INPUT' && e.preventDefault();
-  },
-  hideNameInput: function () {
+  };
+
+  hideNameInput = () => {
     this.setState({ showNameInput: false });
-  },
-  handleAction: function (type) {
+  };
+
+  handleAction = (type) => {
     if (type === 'top') {
       return this.scrollTop();
     }
@@ -252,8 +267,9 @@ var ServerLog = React.createClass({
     if (refresh) {
       return this.autoRefresh();
     }
-  },
-  render: function () {
+  };
+
+  render() {
     var state = this.state;
     var logs = state.logs || [];
     var level = state.level;
@@ -374,6 +390,6 @@ var ServerLog = React.createClass({
       </div>
     );
   }
-});
+}
 
 module.exports = ServerLog;

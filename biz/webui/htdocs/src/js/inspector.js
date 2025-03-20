@@ -5,8 +5,8 @@ var ReqDetail = require('./req-detail');
 var ResDetail = require('./res-detail');
 var util = require('./util');
 
-var Inspector = React.createClass({
-  shouldComponentUpdate: function (nextProps) {
+class Inspector extends React.Component {
+  shouldComponentUpdate(nextProps) {
     var hide = util.getBoolean(this.props.hide);
     if (hide != util.getBoolean(nextProps.hide)) {
       return true;
@@ -21,8 +21,9 @@ var Inspector = React.createClass({
     }
 
     return !this.endTime;
-  },
-  render: function () {
+  }
+
+  render() {
     var props = this.props;
     var modal = props.modal;
     this.endTime = modal && (modal.endTime || modal.lost);
@@ -40,6 +41,6 @@ var Inspector = React.createClass({
       </Divider>
     );
   }
-});
+}
 
 module.exports = Inspector;

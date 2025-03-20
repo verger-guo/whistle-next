@@ -60,11 +60,10 @@ var isClosed = function(reqData) {
   return reqData.err && reqData.err !== COMPRESSED_ERR;
 };
 
-var FrameList = React.createClass({
-  getInitialState: function () {
-    return {};
-  },
-  onFilterChange: function (keyword) {
+class FrameList extends React.Component {
+  state = {};
+
+  onFilterChange = (keyword) => {
     var self = this;
     self.props.modal.search(keyword);
     clearTimeout(self.filterTimer);
@@ -72,8 +71,9 @@ var FrameList = React.createClass({
       self.filterTimer = null;
       self.setState({ keyword: keyword.trim() });
     }, 500);
-  },
-  componentDidMount: function () {
+  };
+
+  componentDidMount() {
     var self = this;
     events.on('autoRefreshFrames', self.autoRefresh);
     events.on('composeFrameId', function (e, id) {
@@ -91,14 +91,17 @@ var FrameList = React.createClass({
     events.on('enableRecordFrame', function () {
       self.refs.recordBtn.enable();
     });
-  },
-  onDoubleClick: function () {
+  }
+
+  onDoubleClick = () => {
     events.trigger('toggleFramesInspectors');
-  },
-  componentWillUpdate: function () {
+  };
+
+  componentWillUpdate() {
     this.atBottom = this.shouldScrollToBottom();
-  },
-  componentDidUpdate: function () {
+  }
+
+  componentDidUpdate() {
     if (this.atBottom) {
       this.autoRefresh();
     }
@@ -112,40 +115,47 @@ var FrameList = React.createClass({
         this.refs.recordBtn.enable();
       }
     }
-  },
-  replay: function () {
+  }
+
+  replay = () => {
     var reqData = this.props.reqData;
     if (!reqData || reqData.closed || reqData.err) {
       this.autoRefresh();
       return;
     }
     events.trigger('replayFrame', this.props.modal.getActive());
-  },
-  stopRefresh: function () {
+  };
+
+  stopRefresh = () => {
     this.container.scrollTop = this.container.scrollTop - 10;
-  },
-  autoRefresh: function () {
+  };
+
+  autoRefresh = () => {
     this.container.scrollTop = 100000000;
-  },
-  clear: function () {
+  };
+
+  clear = () => {
     this.props.modal.clear();
     this.setState({});
     if (this.props.onUpdate) {
       this.props.onUpdate();
     }
-  },
-  compose: function () {
+  };
+
+  compose = () => {
     events.trigger('composeFrame', this.props.modal.getActive());
-  },
-  checkActive: function () {
+  };
+
+  checkActive = () => {
     var reqData = this.props.reqData;
     if (!reqData || reqData.closed || reqData.err) {
       this.autoRefresh();
       return;
     }
     return reqData;
-  },
-  abort: function () {
+  };
+
+  abort = () => {
     var self = this;
     var reqData = self.props.reqData;
     if (!reqData || isClosed(reqData)) {
@@ -166,8 +176,9 @@ var FrameList = React.createClass({
         }
       }
     );
-  },
-  changeStatus: function (reqData, option, isSend) {
+  };
+
+  changeStatus = (reqData, option, isSend) => {
     var self = this;
     var params = {
       reqId: reqData.id
@@ -189,22 +200,25 @@ var FrameList = React.createClass({
         self.setState({});
       }
     });
-  },
-  onSendStatusChange: function (option) {
+  };
+
+  onSendStatusChange = (option) => {
     var reqData = this.checkActive();
     if (!reqData) {
       return;
     }
     this.changeStatus(reqData, option, true);
-  },
-  onReceiveStatusChange: function (option) {
+  };
+
+  onReceiveStatusChange = (option) => {
     var reqData = this.checkActive();
     if (!reqData) {
       return;
     }
     this.changeStatus(reqData, option);
-  },
-  onClear: function (e) {
+  };
+
+  onClear = (e) => {
     if (e.ctrlKey || e.metaKey) {
       if (e.keyCode === 88) {
         this.clear();
@@ -212,8 +226,9 @@ var FrameList = React.createClass({
         this.replay();
       }
     }
-  },
-  shouldScrollToBottom: function () {
+  };
+
+  shouldScrollToBottom = () => {
     var con = this.container;
     var ctn = this.content;
     var modal = this.props.modal;
@@ -222,14 +237,17 @@ var FrameList = React.createClass({
       modal.update();
     }
     return atBottom;
-  },
-  setContainer: function (container) {
+  };
+
+  setContainer = (container) => {
     this.container = ReactDOM.findDOMNode(container);
-  },
-  setContent: function (content) {
+  };
+
+  setContent = (content) => {
     this.content = ReactDOM.findDOMNode(content);
-  },
-  handleAction: function (type) {
+  };
+
+  handleAction = (type) => {
     if (type === 'top') {
       this.container.scrollTop = 0;
       return;
@@ -251,15 +269,17 @@ var FrameList = React.createClass({
     if (refresh) {
       return this.autoRefresh();
     }
-  },
-  onDragStart: function (e) {
+  };
+
+  onDragStart = (e) => {
     var dataId = $(e.target).closest('li').attr('data-id');
     if (!dataId) {
       return;
     }
     e.dataTransfer.setData('frameDataId', dataId);
-  },
-  onContextMenu: function (e) {
+  };
+
+  onContextMenu = (e) => {
     e.preventDefault();
     var frameId = $(e.target).closest('li').attr('data-id');
     var modal = this.props.modal;
@@ -275,8 +295,9 @@ var FrameList = React.createClass({
     var data = util.getMenuPosition(e, 130, 130);
     data.list = contextMenuList;
     this.refs.contextMenu.show(data);
-  },
-  onClickContextMenu: function (action) {
+  };
+
+  onClickContextMenu = (action) => {
     var item = this.currentFocusItem;
     this.currentFocusItem = null;
     switch (action) {
@@ -293,8 +314,9 @@ var FrameList = React.createClass({
       this.clear();
       break;
     }
-  },
-  render: function () {
+  };
+
+  render() {
     var self = this;
     var props = self.props;
     var state = this.state;
@@ -446,6 +468,6 @@ var FrameList = React.createClass({
       </div>
     );
   }
-});
+}
 
 module.exports = FrameList;

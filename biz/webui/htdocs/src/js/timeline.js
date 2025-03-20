@@ -4,12 +4,13 @@ var React = require('react');
 var util = require('./util');
 var TOTAL_RATE = 78;
 
-var Timeline = React.createClass({
-  shouldComponentUpdate: function (nextProps) {
+class Timeline extends React.Component {
+  shouldComponentUpdate(nextProps) {
     var hide = util.getBoolean(this.props.hide);
     return hide != util.getBoolean(nextProps.hide) || !hide;
-  },
-  render: function () {
+  }
+
+  render() {
     var modal = this.props.modal;
     var data = this.props.data;
     var list = data ? [data] : modal ? modal.getSelectedList() : [];
@@ -277,6 +278,6 @@ var Timeline = React.createClass({
       </div>
     );
   }
-});
+}
 
 module.exports = Timeline;

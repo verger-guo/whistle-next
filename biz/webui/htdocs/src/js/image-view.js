@@ -7,15 +7,17 @@ var hasWebView = function() {
   return isClient && window.WebView && window.WebView.name === 'WebViewElement';
 };
 
-var ImageView = React.createClass({
-  shouldComponentUpdate: function (nextProps) {
+class ImageView extends React.Component {
+  shouldComponentUpdate(nextProps) {
     var hide = util.getBoolean(this.props.hide);
     return hide != util.getBoolean(nextProps.hide) || !hide;
-  },
-  preview: function () {
+  }
+
+  preview = () => {
     util.openPreview(this.props.data);
-  },
-  getPreviewUrl: function() {
+  };
+
+  getPreviewUrl = () => {
     var data = !this.props.imgSrc && hasWebView() && this.props.data;
     if (!data || !data.res.base64) {
       return;
@@ -25,8 +27,9 @@ var ImageView = React.createClass({
       this._previewUrl = util.getPreviewUrl(data);
     }
     return this._previewUrl;
-  },
-  getPreviewElem: function(previewUrl) {
+  };
+
+  getPreviewElem = (previewUrl) => {
     if (previewUrl) {
       return <webview src={previewUrl} className="fill" />;
     }
@@ -37,8 +40,9 @@ var ImageView = React.createClass({
     if (props.data) {
       return <a className="w-image-link" onClick={this.preview}>Preview page in new window</a>;
     }
-  },
-  render: function () {
+  };
+
+  render() {
     var props = this.props;
     var previewUrl = this.getPreviewUrl(props.data);
     var isImg = props.imgSrc && !previewUrl;
@@ -55,6 +59,6 @@ var ImageView = React.createClass({
       </div>
     );
   }
-});
+}
 
 module.exports = ImageView;

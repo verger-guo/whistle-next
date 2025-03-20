@@ -5,16 +5,19 @@ var events = require('./events');
 
 var MAX_IFRAME_COUNT = 6;
 
-var TabMgr = React.createClass({
-  getInitialState: function () {
+class TabMgr extends React.Component {
+  constructor(props) {
+    super(props);
     this.initedTabs = {};
-    return {};
-  },
-  shouldComponentUpdate: function (nextProps) {
+    this.state = {};
+  }
+
+  shouldComponentUpdate(nextProps) {
     var hide = util.getBoolean(this.props.hide);
     return hide != util.getBoolean(nextProps.hide) || !hide;
-  },
-  componentDidMount: function () {
+  }
+
+  componentDidMount() {
     var self = this;
     events.on('setComposer', function () {
       var modal = !self.props.hide && self.props.modal;
@@ -23,8 +26,9 @@ var TabMgr = React.createClass({
         elem && elem.compose(modal);
       }
     });
-  },
-  isInited: function (tab) {
+  }
+
+  isInited = (tab) => {
     var cache = this.initedTabs;
     var action = tab.action;
     var exists = cache[action] != null;
@@ -52,8 +56,9 @@ var TabMgr = React.createClass({
     }
     this.initedTabs[action] = Date.now();
     return true;
-  },
-  render: function () {
+  };
+
+  render() {
     var self = this;
     var props = self.props;
     var tabs = props.tabs;
@@ -88,6 +93,6 @@ var TabMgr = React.createClass({
       </div>
     );
   }
-});
+}
 
 module.exports = TabMgr;

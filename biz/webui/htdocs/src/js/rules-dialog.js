@@ -30,18 +30,18 @@ function getName(name) {
   return 'Default';
 }
 
-var RulesDialog = React.createClass({
-  getInitialState: function () {
-    return { rulesName: getName(), newRulesName: ''  };
-  },
-  show: function (rules, values) {
+class RulesDialog extends React.Component {
+  state = { rulesName: getName(), newRulesName: ''  };
+
+  show = (rules, values) => {
     this._rules = rules;
     this._values = values;
     this._hasChanged = false;
     this.setValue();
     this.refs.rulesDialog.show();
-  },
-  onRulesChange: function(e) {
+  };
+
+  onRulesChange = (e) => {
     var name = e.target.value;
     var self = this;
     if (name) {
@@ -57,24 +57,28 @@ var RulesDialog = React.createClass({
       return;
     }
     self.showCreateRules();
-  },
-  showCreateRules: function() {
+  };
+
+  showCreateRules = () => {
     this.refs.createRules.show();
     var input = ReactDOM.findDOMNode(this.refs.rulesName);
     setTimeout(function() {
       input.select();
       input.focus();
     }, 300);
-  },
-  onRulesValueChange: function(e) {
+  };
+
+  onRulesValueChange = (e) => {
     this._hasChanged = true;
     this.setState({rulesValue: e.getValue()});
-  },
-  onNewNameChange: function(e) {
+  };
+
+  onNewNameChange = (e) => {
     var name = e.target.value.replace(/\s+/g, '');
     this.setState({newRulesName: name});
-  },
-  createRules: function() {
+  };
+
+  createRules = () => {
     var self = this;
     var filename = self.state.newRulesName;
     dataCenter.rules.add({
@@ -93,8 +97,9 @@ var RulesDialog = React.createClass({
         util.showSystemError(xhr);
       }
     });
-  },
-  createTempFile: function(cb) {
+  };
+
+  createTempFile = (cb) => {
     var self = this;
     var state = self.state;
     var values = self._values;
@@ -113,8 +118,9 @@ var RulesDialog = React.createClass({
         util.showSystemError(xhr);
       }
     });
-  },
-  saveValue: function(cb) {
+  };
+
+  saveValue = (cb) => {
     var self = this;
     var values = self._values;
     var name = values && values.name;
@@ -145,8 +151,9 @@ var RulesDialog = React.createClass({
       return win.confirm('The name `' + name + '`  already exists, whether to overwrite it?', next);
     }
     next(true);
-  },
-  save: function() {
+  };
+
+  save = () => {
     var self = this;
     var state = self.state;
     var rulesValue = state.rulesValue;
@@ -207,8 +214,9 @@ var RulesDialog = React.createClass({
         }
       });
     });
-  },
-  setValue: function(name, immediate) {
+  };
+
+  setValue = (name, immediate) => {
     if (name) {
       storage.set('previewRulesName', name);
     } else {
@@ -250,8 +258,9 @@ var RulesDialog = React.createClass({
       setTimeout(handleEnd, 360);
     }
     self.setState({ rulesName: getName(name) });
-  },
-  render: function () {
+  };
+
+  render() {
     var rulesModal = dataCenter.getRulesModal();
     var state = this.state;
     var newRulesName = state.newRulesName;
@@ -326,18 +335,20 @@ var RulesDialog = React.createClass({
       </Dialog>
     );
   }
-});
+}
 
-var MockDialogWrap = React.createClass({
-  shouldComponentUpdate: function () {
+class MockDialogWrap extends React.Component {
+  shouldComponentUpdate() {
     return false;
-  },
-  show: function (text, values) {
+  }
+
+  show = (text, values) => {
     this.refs.rulesDialog.show(text, values);
-  },
-  render: function () {
+  };
+
+  render() {
     return <RulesDialog ref="rulesDialog" />;
   }
-});
+}
 
 module.exports = MockDialogWrap;

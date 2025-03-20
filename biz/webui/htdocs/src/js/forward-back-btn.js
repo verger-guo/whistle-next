@@ -1,19 +1,21 @@
 var React = require('react');
 
-var FbBtn = React.createClass({
-  onForward: function() {
+class FbBtn extends React.Component {
+  onForward = () => {
     var props = this.props;
     if (!props.disabledForward && props.onForward) {
       props.onForward();
     }
-  },
-  onBack: function() {
+  };
+
+  onBack = () => {
     var props = this.props;
     if (!props.disabledBack && props.onBack) {
       props.onBack();
     }
-  },
-  render: function() {
+  };
+
+  render() {
     var props = this.props;
     var disabledForward = props.disabledForward;
     var disabledBack = props.disabledBack;
@@ -33,6 +35,6 @@ var FbBtn = React.createClass({
       </div>
     );
   }
-});
+}
 
 module.exports = FbBtn;

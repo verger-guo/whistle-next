@@ -18,11 +18,11 @@ var W2_HEADER_RE = /^x-whistle-/;
 var highlight = function (name) {
   return name === 'x-forwarded-for' || W2_HEADER_RE.test(name);
 };
-var PropsEditor = React.createClass({
-  getInitialState: function () {
-    return {};
-  },
-  getValue: function (name, field) {
+
+class PropsEditor extends React.Component {
+  state = {};
+
+  getValue = (name, field) => {
     var isHeader = this.props.isHeader;
     var allowUploadFile = this.props.allowUploadFile;
     var decode = isHeader ? util.decodeURIComponentSafe : util.noop;
@@ -43,8 +43,9 @@ var PropsEditor = React.createClass({
       );
     }
     return result;
-  },
-  update: function (data) {
+  };
+
+  update = (data) => {
     var modal = {};
     var overflow;
     if (data) {
@@ -67,8 +68,9 @@ var PropsEditor = React.createClass({
     }
     this.setState({ modal: modal }, this.props.onUpdate);
     return overflow;
-  },
-  onAdd: function () {
+  };
+
+  onAdd = () => {
     if (this.props.disabled) {
       return;
     }
@@ -77,14 +79,16 @@ var PropsEditor = React.createClass({
     }
     this.setState({ data: '' });
     this.showDialog();
-  },
-  clear: function() {
+  };
+
+  clear = () => {
     if (!Object.keys(this.state.modal || '').length) {
       return;
     }
     this.setState({ modal: {} }, this.props.onChange);
-  },
-  onEdit: function (e) {
+  };
+
+  onEdit = (e) => {
     if (this.props.disabled) {
       return;
     }
@@ -92,13 +96,15 @@ var PropsEditor = React.createClass({
     var data = this.state.modal[name];
     this.setState({ data: data });
     this.showDialog(data);
-  },
-  execCallback: function(e) {
+  };
+
+  execCallback = (e) => {
     if (e.target.getAttribute('data-action') === 'callback') {
       this.props.callback();
     }
-  },
-  edit: function (e) {
+  };
+
+  edit = (e) => {
     var nameInput = ReactDOM.findDOMNode(this.refs.name);
     var name = nameInput.value.trim();
     if (!name) {
@@ -129,8 +135,9 @@ var PropsEditor = React.createClass({
     this.hideDialog();
     nameInput.value = valueInput.value = '';
     this.execCallback(e);
-  },
-  add: function (e) {
+  };
+
+  add = (e) => {
     var nameInput = ReactDOM.findDOMNode(this.refs.name);
     var name = nameInput.value.trim();
     if (!name) {
@@ -167,11 +174,13 @@ var PropsEditor = React.createClass({
     this.hideDialog();
     nameInput.value = valueInput.value = '';
     this.execCallback(e);
-  },
-  hideDialog: function () {
+  };
+
+  hideDialog = () => {
     this.refs.composerDialog.hide();
-  },
-  showDialog: function (data) {
+  };
+
+  showDialog = (data) => {
     this.refs.composerDialog.show();
     var nameInput = ReactDOM.findDOMNode(this.refs.name);
     if (data) {
@@ -191,8 +200,9 @@ var PropsEditor = React.createClass({
       nameInput.select();
       nameInput.focus();
     }, 600);
-  },
-  onRemove: function (e) {
+  };
+
+  onRemove = (e) => {
     var self = this;
     if (self.props.disabled) {
       return;
@@ -210,14 +220,16 @@ var PropsEditor = React.createClass({
         }
       }
     );
-  },
-  getFields: function () {
+  };
+
+  getFields = () => {
     var modal = this.state.modal || '';
     return Object.keys(modal).map(function (key) {
       return modal[key];
     });
-  },
-  toString: function () {
+  };
+
+  toString = () => {
     var modal = this.state.modal || '';
     var keys = Object.keys(modal);
     if (this.props.isHeader) {
@@ -238,13 +250,15 @@ var PropsEditor = React.createClass({
         );
       })
       .join('&');
-  },
-  onUpload: function () {
+  };
+
+  onUpload = () => {
     if (!this.reading) {
       ReactDOM.findDOMNode(this.refs.readLocalFile).click();
     }
-  },
-  readLocalFile: function () {
+  };
+
+  readLocalFile = () => {
     var form = new FormData(ReactDOM.findDOMNode(this.refs.readLocalFileForm));
     var file = form.get('localFile');
     if (file.size > MAX_FILE_SIZE) {
@@ -271,8 +285,9 @@ var PropsEditor = React.createClass({
       });
     });
     ReactDOM.findDOMNode(this.refs.readLocalFile).value = '';
-  },
-  removeLocalFile: function (e) {
+  };
+
+  removeLocalFile = (e) => {
     var self = this;
     self.setState(
       {
@@ -286,11 +301,13 @@ var PropsEditor = React.createClass({
       }
     );
     e.stopPropagation();
-  },
-  onContextMenu: function(e) {
+  };
+
+  onContextMenu = (e) => {
     util.handlePropsContextMenu(e, this.refs.contextMenu);
-  },
-  render: function () {
+  };
+
+  render() {
     var self = this;
     var modal = this.state.modal || '';
     var filename = this.state.filename;
@@ -467,6 +484,6 @@ var PropsEditor = React.createClass({
       </div>
     );
   }
-});
+}
 
 module.exports = PropsEditor;

@@ -9,25 +9,27 @@ function onWhistlePluginOptionModalReady(init, win) {
   }
 }
 
-var IframeDialog = React.createClass({
-  getInitialState: function() {
-    return {};
-  },
-  show: function(plugin) {
+class IframeDialog extends React.Component {
+  state = {};
+
+  show = (plugin) => {
     var self = this;
     self._hideDialog = false;
     self.setState(plugin, function() {
       self.refs.iframeDialog.show();
     });
-  },
-  hide: function() {
+  };
+
+  hide = () => {
     this.refs.iframeDialog.hide();
     this._hideDialog = true;
-  },
-  shouldComponentUpdate: function () {
+  };
+
+  shouldComponentUpdate() {
     return this._hideDialog === false;
-  },
-  render: function() {
+  }
+
+  render() {
     var state = this.state;
     var disabled = state.disabled;
     var name = state.name;
@@ -62,6 +64,6 @@ var IframeDialog = React.createClass({
       </Dialog>
     );
   }
-});
+}
 
 module.exports = IframeDialog;

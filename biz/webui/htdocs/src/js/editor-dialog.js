@@ -38,11 +38,10 @@ function getTempFile(tempFile, cb) {
   });
 }
 
-var EditorDialog = React.createClass({
-  getInitialState: function () {
-    return {};
-  },
-  show: function (data) {
+class EditorDialog extends React.Component {
+  state = {};
+
+  show = (data) => {
     this._hideDialog = false;
     this.setState(data);
     var textarea = this._textarea;
@@ -53,18 +52,22 @@ var EditorDialog = React.createClass({
       }, 600);
     }
     this.refs.editorDialog.show();
-  },
-  hide: function () {
+  };
+
+  hide = () => {
     this.refs.editorDialog.hide();
     this._hideDialog = true;
-  },
-  onChange: function (e) {
+  };
+
+  onChange = (e) => {
     this.setState({ value: e.target.value });
-  },
-  shouldComponentUpdate: function () {
+  };
+
+  shouldComponentUpdate() {
     return this._hideDialog === false;
-  },
-  componentDidMount: function() {
+  }
+
+  componentDidMount() {
     var self = this;
     if (!self.props.textEditor) {
       return;
@@ -121,18 +124,21 @@ var EditorDialog = React.createClass({
         }
       }
     });
-  },
-  getValue: function() {
+  }
+
+  getValue = () => {
     var value = this._textarea ? this._textarea.value : this.state.value;
     return value || '';
-  },
-  onConfirm: function() {
+  };
+
+  onConfirm = () => {
     var result = this.props.onConfirm(this.getValue());
     if (result !== false) {
       this.hide();
     }
-  },
-  onSave: function() {
+  };
+
+  onSave = () => {
     var self = this;
     var value = self.getValue();
     if (!self.state.isTempFile) {
@@ -201,8 +207,9 @@ var EditorDialog = React.createClass({
         }
       );
     });
-  },
-  formatValue: function() {
+  };
+
+  formatValue = () => {
     var textarea = this._textarea;
     try {
       var val = textarea.value.trim();
@@ -215,11 +222,13 @@ var EditorDialog = React.createClass({
     } catch (e) {
       message.error(e.message);
     }
-  },
-  clearValue: function() {
+  };
+
+  clearValue = () => {
     this._textarea.value = '';
-  },
-  render: function () {
+  };
+
+  render() {
     var state = this.state;
     var props = this.props;
     var value = state.value;
@@ -282,6 +291,6 @@ var EditorDialog = React.createClass({
       </Dialog>
     );
   }
-});
+}
 
 module.exports = EditorDialog;

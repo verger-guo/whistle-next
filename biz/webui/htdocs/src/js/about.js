@@ -19,8 +19,8 @@ function hasNewVersion(data) {
   );
 }
 
-var About = React.createClass({
-  componentDidMount: function () {
+class About extends React.Component {
+  componentDidMount() {
     var self = this;
     dataCenter.getInitialData(function (data) {
       self.setState({
@@ -29,8 +29,9 @@ var About = React.createClass({
         hasUpdate: self.checkUpdate(hasNewVersion(data))
       });
     });
-  },
-  checkUpdate: function (hasUpdate) {
+  }
+
+  checkUpdate = (hasUpdate) => {
     if (this.props.onCheckUpdate) {
       if ((!this._hasUpdate && !hasUpdate) || hasUpdate !== this._hasUpdate) {
         this._hasUpdate = hasUpdate;
@@ -38,8 +39,9 @@ var About = React.createClass({
       }
     }
     return hasUpdate;
-  },
-  showAboutInfo: function (showTips) {
+  };
+
+  showAboutInfo = (showTips) => {
     var self = this;
     self.showDialog();
     var onClick = self.props.onClick;
@@ -59,14 +61,17 @@ var About = React.createClass({
         });
       }
     });
-  },
-  showDialog: function () {
+  };
+
+  showDialog = () => {
     this.refs.aboutDialog.show();
-  },
-  hideDialog: function () {
+  };
+
+  hideDialog = () => {
     this.refs.aboutDialog.hide();
-  },
-  render: function () {
+  };
+
+  render() {
     var self = this;
     var state = self.state || {};
     var version = state.version;
@@ -138,6 +143,6 @@ var About = React.createClass({
       </a>
     );
   }
-});
+}
 
 module.exports = About;

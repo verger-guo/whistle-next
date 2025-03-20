@@ -5,14 +5,13 @@ var ReactDOM = require('react-dom');
 var util = require('./util');
 var Dialog = require('./dialog');
 
-var ListDialog = React.createClass({
-  getInitialState: function () {
-    return {
-      checkedItems: {},
-      selectedCount: 0
-    };
-  },
-  onChange: function (e) {
+class ListDialog extends React.Component {
+  state = {
+    checkedItems: {},
+    selectedCount: 0
+  };
+
+  onChange = (e) => {
     var target = e.target;
     var name = target.parentNode.title;
     var checkedItems = this.state.checkedItems;
@@ -22,8 +21,9 @@ var ListDialog = React.createClass({
       delete checkedItems[name];
     }
     this.setState({ selectedCount: Object.keys(checkedItems).length });
-  },
-  onConfirm: function (e) {
+  };
+
+  onConfirm = (e) => {
     if (e.target.disabled) {
       return;
     }
@@ -36,16 +36,18 @@ var ListDialog = React.createClass({
     ReactDOM.findDOMNode(this.refs.data).value = JSON.stringify(items);
     form.submit();
     input.value = '';
-  },
-  getAllItems: function () {
+  };
+
+  getAllItems = () => {
     var list = this.props.list || [];
     var result = {};
     list.forEach(function (name) {
       result[name] = 1;
     });
     return result;
-  },
-  show: function (selectedList) {
+  };
+
+  show = (selectedList) => {
     var self = this;
     self.refs.dialog.show();
     if (selectedList) {
@@ -66,14 +68,17 @@ var ListDialog = React.createClass({
     !this.props.onConfirm && setTimeout(function () {
       ReactDOM.findDOMNode(self.refs.filename).focus();
     }, 500);
-  },
-  hide: function() {
+  };
+
+  hide = () => {
     this.refs.dialog.hide();
-  },
-  preventDefault: function (e) {
+  };
+
+  preventDefault = (e) => {
     e.preventDefault();
-  },
-  render: function () {
+  };
+
+  render() {
     var self = this;
     var state = self.state;
     var props = self.props;
@@ -178,6 +183,6 @@ var ListDialog = React.createClass({
       </Dialog>
     );
   }
-});
+}
 
 module.exports = ListDialog;

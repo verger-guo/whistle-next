@@ -9,15 +9,15 @@ var storage = require('./storage');
 
 var DEFAULT_TAB = ' ';
 
-var ComposerList = React.createClass({
-  getInitialState: function () {
-    return { activeName: storage.get('activeComposerTab') || DEFAULT_TAB };
-  },
-  shouldComponentUpdate: function (nextProps) {
+class ComposerList extends React.Component {
+  state = { activeName: storage.get('activeComposerTab') || DEFAULT_TAB };
+
+  shouldComponentUpdate(nextProps) {
     var hide = util.getBoolean(this.props.hide);
     return hide != util.getBoolean(nextProps.hide) || !hide;
-  },
-  componentDidMount: function () {
+  }
+
+  componentDidMount() {
     var self = this;
     events.on('comTabsChange', function () {
       self.setState({});
@@ -25,14 +25,16 @@ var ComposerList = React.createClass({
     events.on('_setComposerData', function() {
       self.showTab(DEFAULT_TAB);
     });
-  },
-  showTab: function (name) {
+  }
+
+  showTab = (name) => {
     if (this.state.activeName !== name) {
       storage.set('activeComposerTab', name);
       this.setState({ activeName: name });
     }
-  },
-  render: function () {
+  };
+
+  render() {
     var self = this;
     var hide = self.props.hide;
     var modal = self.props.modal;
@@ -101,6 +103,6 @@ var ComposerList = React.createClass({
       </div>
     );
   }
-});
+}
 
 module.exports = ComposerList;

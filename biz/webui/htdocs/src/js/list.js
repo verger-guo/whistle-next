@@ -137,8 +137,9 @@ function getSuffix(name) {
   return index == -1 ? '' : name.substring(index + 1);
 }
 
-var List = React.createClass({
-  getInitialState: function() {
+class List extends React.Component {
+  constructor(props, context) {
+    super(props, context);
     var nodes = util.parseJSON(storage.get(this.getCollapseKey()));
     var map = {};
     this.collapseGroups = Array.isArray(nodes) ? nodes.filter(function(name) {
@@ -147,9 +148,10 @@ var List = React.createClass({
         return true;
       }
     }) : [];
-    return {};
-  },
-  componentDidMount: function () {
+    this.state = {};
+  }
+
+  componentDidMount() {
     var self = this;
     var visible = !self.props.hide;
     $(window)
@@ -235,19 +237,22 @@ var List = React.createClass({
       }
     });
     this.ensureVisible(true);
-  },
-  expandGroup: function(groupName) {
+  }
+
+  expandGroup = (groupName) => {
     var index = this.collapseGroups.indexOf(groupName);
     if (index !== -1) {
       this.collapseGroups.splice(index, 1);
       storage.set(this.getCollapseKey(), JSON.stringify(this.collapseGroups));
     }
-  },
-  shouldComponentUpdate: function (nextProps) {
+  };
+
+  shouldComponentUpdate(nextProps) {
     var hide = util.getBoolean(this.props.hide);
     return hide != util.getBoolean(nextProps.hide) || !hide;
-  },
-  componentDidUpdate: function () {
+  }
+
+  componentDidUpdate() {
     var modal = this.props.modal;
     var curListLen = modal.list.length;
     var obj = modal.getActiveObj();
@@ -263,16 +268,18 @@ var List = React.createClass({
     if (this.props.hide) {
       this.refs.recycleBinDialog.hide();
     }
-  },
-  ensureVisible: function (init, activeItem) {
+  }
+
+  ensureVisible = (init, activeItem) => {
     activeItem = activeItem || this.props.modal.getActive();
     if (activeItem) {
       var elem = ReactDOM.findDOMNode(this.refs[activeItem.name]);
       var con = ReactDOM.findDOMNode(this.refs.list);
       util.ensureVisible(elem, con, init);
     }
-  },
-  onClick: function (item) {
+  };
+
+  onClick = (item) => {
     var self = this;
     if (
       typeof self.props.onActive != 'function' ||
@@ -281,8 +288,9 @@ var List = React.createClass({
       self.props.modal.setActive(item.name);
       self.setState({ activeItem: item });
     }
-  },
-  toggleGroup: function (item) {
+  };
+
+  toggleGroup = (item) => {
     var index = this.collapseGroups.indexOf(item.name);
     if (index === -1) {
       this.collapseGroups.push(item.name);
@@ -291,8 +299,9 @@ var List = React.createClass({
     }
     storage.set(this.getCollapseKey(), JSON.stringify(this.collapseGroups));
     this.setState({});
-  },
-  onClickGroup: function (e) {
+  };
+
+  onClickGroup = (e) => {
     var name = e.target.getAttribute('data-group');
     var groups = this.props.modal.groups;
     var group = groups[name];
@@ -301,23 +310,27 @@ var List = React.createClass({
     }
     group.expand = !group.expand;
     this.setState({});
-  },
-  onDoubleClick: function (item, okIcon) {
+  };
+
+  onDoubleClick = (item, okIcon) => {
     (item.selected && !item.changed) || okIcon
       ? this.onUnselect(item)
       : this.onSelect(item);
     var onDoubleClick = this.props.onDoubleClick;
     typeof onDoubleClick == 'function' && onDoubleClick(item);
-  },
-  onSelect: function (data) {
+  };
+
+  onSelect = (data) => {
     var onSelect = this.props.onSelect;
     typeof onSelect == 'function' && onSelect(data);
-  },
-  onUnselect: function (data) {
+  };
+
+  onUnselect = (data) => {
     var onUnselect = this.props.onUnselect;
     typeof onUnselect == 'function' && onUnselect(data);
-  },
-  onChange: function (e) {
+  };
+
+  onChange = (e) => {
     var modal = this.props.modal;
     var item = modal.getActive();
     if (!item) {
@@ -336,36 +349,42 @@ var List = React.createClass({
         events.trigger('updateGlobal');
       }
     }
-  },
-  onFilterChange: function (keyword) {
+  };
+
+  onFilterChange = (keyword) => {
     this.props.modal.search(keyword, this.props.name != 'rules');
     this.setState({ filterText: keyword });
-  },
-  getItemByKey: function (key) {
+  };
+
+  getItemByKey = (key) => {
     return this.props.modal.getByKey(key);
-  },
-  onDragStart: function (e) {
+  };
+
+  onDragStart = (e) => {
     var target = getTarget(e);
     var name = target && target.getAttribute('data-name');
     if (name) {
       e.dataTransfer.setData(NAME_PREFIX + name, 1);
       e.dataTransfer.setData('-' + NAME_PREFIX, name);
     }
-  },
-  onDragEnter: function (e) {
+  };
+
+  onDragEnter = (e) => {
     var info = getDragInfo(e);
     if (info) {
       curTarget = info.target;
       curTarget.style.background = '#ddd';
     }
-  },
-  onDragLeave: function (e) {
+  };
+
+  onDragLeave = (e) => {
     var info = getDragInfo(e);
     if (info) {
       info.target.style.background = '';
     }
-  },
-  onDrop: function (e) {
+  };
+
+  onDrop = (e) => {
     var info = getDragInfo(e, this.refs.list);
     e.stopPropagation();
     if (info) {
@@ -400,8 +419,9 @@ var List = React.createClass({
         this.triggerChange('move');
       }
     }
-  },
-  formatJson: function (item) {
+  };
+
+  formatJson = (item) => {
     var value = (item && item.value) || '';
     if (/\S/.test(value)) {
       var json = util.parseRawJson(value);
@@ -414,14 +434,16 @@ var List = React.createClass({
         }
       }
     }
-  },
-  reloadRecycleBin: function (name) {
+  };
+
+  reloadRecycleBin = (name) => {
     if (this.refs.recycleBinDialog.isVisible()) {
       this._pendingRecycle = false;
       this.showRecycleBin(name);
     }
-  },
-  showRecycleBin: function (name) {
+  };
+
+  showRecycleBin = (name) => {
     var self = this;
     if (self._pendingRecycle) {
       return;
@@ -438,8 +460,9 @@ var List = React.createClass({
       }
       self.refs.recycleBinDialog.show({ name: name, list: data.list });
     });
-  },
-  getGroupByName: function(name) {
+  };
+
+  getGroupByName = (name) => {
     var modal = this.props.modal;
     var item = modal.data[name];
     if (!item || util.isGroup(item.name)) {
@@ -452,12 +475,14 @@ var List = React.createClass({
         return item;
       }
     }
-  },
-  getCurGroup: function(item) {
+  };
+
+  getCurGroup = (item) => {
     item = item || this.currentFocusItem;
     return item && this.getGroupByName(item.name);
-  },
-  onClickContextMenu: function (action, e, parentAction, menuName) {
+  };
+
+  onClickContextMenu = (action, e, parentAction, menuName) => {
     var self = this;
     var name = self.props.name === 'rules' ? 'Rules' : 'Values';
     switch (parentAction || action) {
@@ -541,8 +566,9 @@ var List = React.createClass({
       });
       break;
     }
-  },
-  triggerChange: function (type) {
+  };
+
+  triggerChange = (type) => {
     var data = this.props.modal.data;
     var list = this.props.modal.list.map(function (name) {
       var item = data[name];
@@ -556,14 +582,17 @@ var List = React.createClass({
       url: location.href,
       list: list
     });
-  },
-  isRules: function() {
+  };
+
+  isRules = () => {
     return this.props.name == 'rules';
-  },
-  getCollapseKey: function() {
+  };
+
+  getCollapseKey = () => {
     return this.isRules() ? 'collapseRulesGroups' : 'collapseValuesGroups';
-  },
-  onContextMenu: function (e) {
+  };
+
+  onContextMenu = (e) => {
     var name = $(e.target).closest('a').attr('data-name');
     var modal = this.props.modal;
     name = name && getName(name);
@@ -624,12 +653,14 @@ var List = React.createClass({
     data.list[4].disabled = isDefault || disabled;
     this.refs.contextMenu.show(data);
     e.preventDefault();
-  },
-  onAddRule: function (name) {
+  };
+
+  onAddRule = (name) => {
     this.props.modal.setActive(name);
     this.setState({});
-  },
-  enableAllRules: function () {
+  };
+
+  enableAllRules = () => {
     var self = this;
     if (self._pendingEnableRules) {
       return;
@@ -639,8 +670,9 @@ var List = React.createClass({
     }, 2000);
     $('.w-enable-rules-menu').trigger('click');
     events.trigger('disableAllRules');
-  },
-  parseList: function() {
+  };
+
+  parseList = () => {
     var isRules = this.isRules();
     var modal = this.props.modal;
     var list = modal.list;
@@ -685,19 +717,22 @@ var List = React.createClass({
     }
     setStatus();
     return list;
-  },
-  onFormat: function(e) {
+  };
+
+  onFormat = (e) => {
     this.formatJson(this.props.modal.getActive());
     e.preventDefault();
-  },
-  onInspect: function(e) {
+  };
+
+  onInspect = (e) => {
     var item = this.props.modal.getActive();
     if (item) {
       events.trigger('showJsonViewDialog', item.value);
       e.preventDefault();
     }
-  },
-  render: function () {
+  };
+
+  render() {
     var self = this;
     var modal = self.props.modal;
     var list = modal.list;
@@ -813,6 +848,6 @@ var List = React.createClass({
       </div>
     );
   }
-});
+}
 
 module.exports = List;

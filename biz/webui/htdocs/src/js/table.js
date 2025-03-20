@@ -2,8 +2,8 @@ require('./base-css.js');
 require('../css/table.css');
 var React = require('react');
 
-var Table = React.createClass({
-  render: function () {
+class Table extends React.Component {
+  render() {
     var head = this.props.head;
     var hasHead = Array.isArray(head) && head.length;
     var modal = this.props.modal || [];
@@ -33,6 +33,6 @@ var Table = React.createClass({
       </table>
     );
   }
-});
+}
 
 module.exports = Table;

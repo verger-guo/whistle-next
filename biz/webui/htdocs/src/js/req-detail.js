@@ -22,39 +22,42 @@ var BTNS = [
   { name: 'Plugins', hide: true }
 ];
 
-var ReqDetail = React.createClass({
-  getInitialState: function () {
-    return {
-      initedHeaders: false,
-      initedTextView: false,
-      initedCookies: false,
-      initedWebForms: false,
-      initedJSONView: false,
-      initedHexView: false,
-      initedRaw: false,
-      initPlugins: false
-    };
-  },
-  componentDidMount: function () {
+class ReqDetail extends React.Component {
+  state = {
+    initedHeaders: false,
+    initedTextView: false,
+    initedCookies: false,
+    initedWebForms: false,
+    initedJSONView: false,
+    initedHexView: false,
+    initedRaw: false,
+    initPlugins: false
+  };
+
+  componentDidMount() {
     var self = this;
     events.on('reqTabsChange', function () {
       self.setState({});
     });
-  },
-  shouldComponentUpdate: function (nextProps) {
+  }
+
+  shouldComponentUpdate(nextProps) {
     var hide = util.getBoolean(this.props.hide);
     return hide != util.getBoolean(nextProps.hide) || !hide;
-  },
-  onClickBtn: function (btn) {
+  }
+
+  onClickBtn = (btn) => {
     this.selectBtn(btn);
     this.setState({});
-  },
-  selectBtn: function (btn) {
+  };
+
+  selectBtn = (btn) => {
     btn.active = true;
     this.state.btn = btn;
     this.state['inited' + btn.name] = true;
-  },
-  render: function () {
+  };
+
+  render() {
     var state = this.state;
     var btn = state.btn;
     if (!btn) {
@@ -281,6 +284,6 @@ var ReqDetail = React.createClass({
       </div>
     );
   }
-});
+}
 
 module.exports = ReqDetail;

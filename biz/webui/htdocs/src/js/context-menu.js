@@ -6,11 +6,10 @@ var ReactDOM = require('react-dom');
 var util = require('./util');
 var EditorDialog = require('./editor-dialog');
 
-var ContextMenu = React.createClass({
-  getInitialState: function () {
-    return {};
-  },
-  componentDidMount: function () {
+class ContextMenu extends React.Component {
+  state = {};
+
+  componentDidMount() {
     var self = this;
     self.container = document.createElement('div');
     document.body.appendChild(self.container);
@@ -33,21 +32,25 @@ var ContextMenu = React.createClass({
     $(window).on('resize blur', function () {
       self.hide();
     });
-  },
-  componentDidUpdate: function () {
+  }
+
+  componentDidUpdate() {
     ReactDOM.unstable_renderSubtreeIntoContainer(
       this,
       this.getDialogElement(),
       this.container
     );
-  },
-  preventDefault: function (e) {
+  }
+
+  preventDefault = (e) => {
     e.preventDefault();
-  },
-  isVisible: function () {
+  };
+
+  isVisible = () => {
     return this.state.visible;
-  },
-  onClick: function (e) {
+  };
+
+  onClick = (e) => {
     var target = $(e.target).closest('li');
     e.preventDefault();
     if (
@@ -78,8 +81,9 @@ var ContextMenu = React.createClass({
       });
       this.setState({});
     }
-  },
-  getDialogElement: function () {
+  };
+
+  getDialogElement = () => {
     var self = this;
     var data = self.state;
     var list = data.list || [];
@@ -179,21 +183,25 @@ var ContextMenu = React.createClass({
         </ul>
       </div>
     );
-  },
-  show: function (data) {
+  };
+
+  show = (data) => {
     data.visible = true;
     this.setState(data);
-  },
-  hide: function () {
+  };
+
+  hide = () => {
     this.setState({ visible: false });
-  },
-  update: function () {
+  };
+
+  update = () => {
     this.state.visible && this.setState({});
-  },
-  render: function () {
+  };
+
+  render() {
     return <EditorDialog ref="editorDialog" />;
   }
-});
+}
 
 ContextMenu.util = util;
 ContextMenu.$ = $;

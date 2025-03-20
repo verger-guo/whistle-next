@@ -119,11 +119,10 @@ function addIndent(list) {
   });
 }
 
-var Online = React.createClass({
-  getInitialState: function () {
-    return {};
-  },
-  componentWillMount: function () {
+class Online extends React.Component {
+  state = {};
+
+  componentWillMount() {
     var self = this;
     var online = true;
     var body = $(document.body);
@@ -141,16 +140,18 @@ var Online = React.createClass({
       }
       self.setState({ server: data });
     });
-  },
-  componentDidMount: function() {
+  }
+
+  componentDidMount() {
     var self = this;
     dataCenter.setServerInfo = function(info) {
       curOrder = info.dnsOrder;
       dnsTimer = dnsTimer || setTimeout(selectDnsOption, 300);
       self.setIPv6Only(info.ipv6Only);
     };
-  },
-  checkServerChanged: function (data) {
+  }
+
+  checkServerChanged = (data) => {
     data.mac = data.mac || '';
     if (this.macAddr === undefined) {
       this.macAddr = data.mac;
@@ -175,14 +176,16 @@ var Online = React.createClass({
     } else {
       this.refs.confirmReload.hide();
     }
-  },
-  showServerInfo: function () {
+  };
+
+  showServerInfo = () => {
     if (this.state.server) {
       this.updateServerInfo(dataCenter.getServerInfo());
       dialog.modal('show');
     }
-  },
-  setIPv6Only: function(ipv6Only, imd) {
+  };
+
+  setIPv6Only = (ipv6Only, imd) => {
     if ((!imd && this._pendingIPv6Only) || !dialog) {
       return;
     }
@@ -201,8 +204,9 @@ var Online = React.createClass({
         }
       }
     }
-  },
-  updateServerInfo: function (server) {
+  };
+
+  updateServerInfo = (server) => {
     if (!server) {
       return;
     }
@@ -487,11 +491,13 @@ var Online = React.createClass({
         });
       });
     }
-  },
-  reload: function () {
+  };
+
+  reload = () => {
     location.reload();
-  },
-  getTitle: function (server) {
+  };
+
+  getTitle = (server) => {
     if (!server) {
       return;
     }
@@ -558,12 +564,14 @@ var Online = React.createClass({
       info.push('Use custom DNS servers');
     }
     return info.join('\n');
-  },
-  setTitle: function () {
+  };
+
+  setTitle = () => {
     var server = dataCenter.getServerInfo() || this.state.server;
     ReactDOM.findDOMNode(this.refs.onlineMenu).title = this.getTitle(server);
-  },
-  render: function () {
+  };
+
+  render() {
     var server = this.state.server || '';
     return (
       <a
@@ -611,6 +619,6 @@ var Online = React.createClass({
       </a>
     );
   }
-});
+}
 
 module.exports = Online;

@@ -19,18 +19,18 @@ function findActive(btn) {
   return btn.active;
 }
 
-var FrameClient = React.createClass({
-  getInitialState: function () {
-    return {};
-  },
-  showTab: function (i) {
+class FrameClient extends React.Component {
+  state = {};
+
+  showTab = (i) => {
     BTNS.forEach(function (btn) {
       btn.active = false;
     });
     this.selectBtn(BTNS[i]);
     this.setState({});
-  },
-  componentDidMount: function () {
+  };
+
+  componentDidMount() {
     var self = this;
     events.on('composeFrame', function (e, frame) {
       if (frame) {
@@ -52,26 +52,31 @@ var FrameClient = React.createClass({
         self.onClickBtn(BTNS[0]);
       }
     });
-  },
-  onDragEnter: function (e) {
+  }
+
+  onDragEnter = (e) => {
     if (e.dataTransfer.types.indexOf('framedataid') != -1) {
       this.showTab(4);
       e.preventDefault();
     }
-  },
-  onDrop: function (e) {
+  };
+
+  onDrop = (e) => {
     var id = e.dataTransfer.getData('frameDataId');
     id && events.trigger('composeFrameId', id);
-  },
-  onClickBtn: function (btn) {
+  };
+
+  onClickBtn = (btn) => {
     this.selectBtn(btn);
     this.setState({});
-  },
-  selectBtn: function (btn) {
+  };
+
+  selectBtn = (btn) => {
     btn.active = true;
     this.state.btn = btn;
-  },
-  render: function () {
+  };
+
+  render() {
     var state = this.state;
     var btn = state.btn;
     if (BTNS.indexOf(btn) === -1) {
@@ -132,6 +137,6 @@ var FrameClient = React.createClass({
       </div>
     );
   }
-});
+}
 
 module.exports = FrameClient;

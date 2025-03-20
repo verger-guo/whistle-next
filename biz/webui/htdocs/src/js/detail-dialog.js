@@ -4,8 +4,8 @@ var Detail = require('./detail');
 
 var MIN_HEIGHT = 550;
 
-var DetailDialog = React.createClass({
-  show: function (data) {
+class DetailDialog extends React.Component {
+  show = (data) => {
     if (!data) {
       return;
     }
@@ -18,17 +18,20 @@ var DetailDialog = React.createClass({
     setTimeout(function () {
       self.setState({ data: data, height: height });
     }, 500);
-  },
-  hide: function () {
+  };
+
+  hide = () => {
     this.refs.detail.hide();
     this.setState({ data: null });
-  },
-  shouldComponentUpdate: function () {
+  };
+
+  shouldComponentUpdate() {
     return (
       !this.state || (this.state.data ? this.refs.detail.isVisible() : false)
     );
-  },
-  render: function () {
+  }
+
+  render() {
     var state = this.state;
     var height = (state && state.height) || MIN_HEIGHT;
     return (
@@ -53,6 +56,6 @@ var DetailDialog = React.createClass({
       </Dialog>
     );
   }
-});
+}
 
 module.exports = DetailDialog;

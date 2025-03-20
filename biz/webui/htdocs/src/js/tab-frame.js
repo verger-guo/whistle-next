@@ -13,29 +13,36 @@ function onWhistleInspectorCustomTabReady(init, win) {
   }
 }
 
-var TabFrame = React.createClass({
-  getInitialState: function () {
-    var url = this.props.src;
+class TabFrame extends React.Component {
+  constructor(props) {
+    super(props);
+    var url = props.src;
     url += url.indexOf('?') === -1 ? '?' : '&';
-    return {
+
+    this.state = {
       url:
         url + '???_WHISTLE_PLUGIN_INSPECTOR_TAB_' + dataCenter.getPort() + '???'
     };
-  },
-  componentDidMount: function () {
+  }
+
+  componentDidMount() {
     events.on('selectedSessionChange', this.handlePush);
-  },
-  componentWillUnmount: function () {
+  }
+
+  componentWillUnmount() {
     events.off('selectedSessionChange', this.handlePush);
-  },
-  shouldComponentUpdate: function (nextProps) {
+  }
+
+  shouldComponentUpdate(nextProps) {
     var hide = util.getBoolean(this.props.hide);
     return hide != util.getBoolean(nextProps.hide) || !hide;
-  },
-  compose: function (item) {
+  }
+
+  compose = (item) => {
     this.handlePush(null, null, item);
-  },
-  handlePush: function (_, item, comItem) {
+  };
+
+  handlePush = (_, item, comItem) => {
     try {
       var win = this.refs.iframe.getWindow();
       if (
@@ -55,17 +62,20 @@ var TabFrame = React.createClass({
       }
     } catch (e) {}
     this.composeItem = comItem;
-  },
-  componentDidUpdate: function () {
+  };
+
+  componentDidUpdate() {
     this.handlePush();
-  },
-  onLoad: function () {
+  }
+
+  onLoad = () => {
     if (this.composeItem) {
       this.handlePush(null, null, this.composeItem);
       this.composeItem = null;
     }
-  },
-  render: function () {
+  };
+
+  render() {
     var display = this.props.hide ? 'none' : undefined;
     // 防止被改
     window.onWhistleInspectorCustomTabReady = onWhistleInspectorCustomTabReady;
@@ -78,6 +88,6 @@ var TabFrame = React.createClass({
       />
     );
   }
-});
+}
 
 module.exports = TabFrame;

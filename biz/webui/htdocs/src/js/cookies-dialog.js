@@ -3,29 +3,32 @@ require('../css/composer.css');
 var React = require('react');
 var Dialog = require('./dialog');
 
-var CookiesDialog = React.createClass({
-  getInitialState: function() {
-    return { cookies: [] };
-  },
-  show: function (cookies) {
+class CookiesDialog extends React.Component {
+  state = { cookies: [] };
+
+  show = (cookies) => {
     this.refs.cookiesDialog.show();
     this._hideDialog = false;
     this.setState({ cookies: cookies || [] });
-  },
-  hide: function () {
+  };
+
+  hide = () => {
     this.refs.cookiesDialog.hide();
     this._hideDialog = true;
-  },
-  shouldComponentUpdate: function () {
+  };
+
+  shouldComponentUpdate() {
     return this._hideDialog === false;
-  },
-  insert: function (e) {
+  }
+
+  insert = (e) => {
     var i = e.target.getAttribute('data-index');
     var cookie = this.state.cookies[i];
     cookie && this.props.onInsert(cookie, true);
     this.hide();
-  },
-  render: function () {
+  };
+
+  render() {
     var self = this;
     var cookies = self.state.cookies;
     return (
@@ -80,6 +83,6 @@ var CookiesDialog = React.createClass({
       </Dialog>
     );
   }
-});
+}
 
 module.exports = CookiesDialog;

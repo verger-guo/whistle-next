@@ -8,34 +8,38 @@ var FrameModal = require('./frame-modal');
 var dataCenter = require('./data-center');
 var LazyInit = require('./lazy-init');
 
-var Frames = React.createClass({
-  getInitialState: function () {
-    return {
-      modal: new FrameModal()
-    };
-  },
-  componentDidMount: function () {
+class Frames extends React.Component {
+  state = {
+    modal: new FrameModal()
+  };
+
+  componentDidMount() {
     var self = this;
     dataCenter.on('framesUpdate', function () {
       self.setState({});
     });
-  },
-  shouldComponentUpdate: function (nextProps) {
+  }
+
+  shouldComponentUpdate(nextProps) {
     var hide = util.getBoolean(this.props.hide);
     return hide != util.getBoolean(nextProps.hide) || !hide;
-  },
-  onClickFrame: function (frame) {
+  }
+
+  onClickFrame = (frame) => {
     var modal = this.state.modal;
     modal.setActive(frame);
     this.setState({});
-  },
-  onUpdate: function () {
+  };
+
+  onUpdate = () => {
     this.setState({});
-  },
-  onDOMReady: function () {
+  };
+
+  onDOMReady = () => {
     this.refs.frameList.autoRefresh();
-  },
-  render: function () {
+  };
+
+  render() {
     var props = this.props;
     var modal = this.state.modal;
     var frames = modal.reset(props.frames);
@@ -72,6 +76,6 @@ var Frames = React.createClass({
       </div>
     );
   }
-});
+}
 
 module.exports = Frames;

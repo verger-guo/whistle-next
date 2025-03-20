@@ -17,11 +17,10 @@ function decode(name) {
   return name;
 }
 
-var RecycleBinDialog = React.createClass({
-  getInitialState: function () {
-    return {};
-  },
-  componentDidMount: function () {
+class RecycleBinDialog extends React.Component {
+  state = {};
+
+  componentDidMount() {
     var self = this;
     events.on('rulesRecycleList', function (_, data) {
       if (self.state.name === 'Rules') {
@@ -33,8 +32,9 @@ var RecycleBinDialog = React.createClass({
         self.show(data, true);
       }
     });
-  },
-  show: function (options, quiet) {
+  }
+
+  show = (options, quiet) => {
     var self = this;
     if (options.list) {
       options.list = options.list
@@ -53,11 +53,13 @@ var RecycleBinDialog = React.createClass({
     self.setState(options, function () {
       !quiet && self.refs.recycleBinDialog.show();
     });
-  },
-  hide: function () {
+  };
+
+  hide = () => {
     this.refs.recycleBinDialog.hide();
-  },
-  checkFile: function (data, xhr) {
+  };
+
+  checkFile = (data, xhr) => {
     if (!data) {
       util.showSystemError(xhr);
       return;
@@ -78,8 +80,9 @@ var RecycleBinDialog = React.createClass({
       return;
     }
     return true;
-  },
-  view: function (e) {
+  };
+
+  view = (e) => {
     var self = this;
     var name = e.target.getAttribute('data-name');
     dataCenter[this.state.name.toLowerCase()].recycleView(
@@ -94,8 +97,9 @@ var RecycleBinDialog = React.createClass({
         util.openEditor(data.data);
       }
     );
-  },
-  recover: function (item) {
+  };
+
+  recover = (item) => {
     var self = this;
     dataCenter[self.state.name.toLowerCase()].recycleView(
       { name: item.name },
@@ -107,8 +111,9 @@ var RecycleBinDialog = React.createClass({
         events.trigger('recover' + self.state.name, item);
       }
     );
-  },
-  remove: function (e) {
+  };
+
+  remove = (e) => {
     var name = e.target.getAttribute('data-name');
     var origName = decode(name.substring(name.indexOf('.') + 1));
     var self = this;
@@ -129,11 +134,13 @@ var RecycleBinDialog = React.createClass({
         }
       }
     );
-  },
-  isVisible: function () {
+  };
+
+  isVisible = () => {
     return $(ReactDOM.findDOMNode(this.refs.recycleBinBody)).is(':visible');
-  },
-  render: function () {
+  };
+
+  render() {
     var self = this;
     var state = self.state;
     var list = state.list || [];
@@ -202,24 +209,28 @@ var RecycleBinDialog = React.createClass({
       </Dialog>
     );
   }
-});
+}
 
-var RecycleBinDialogWrap = React.createClass({
-  shouldComponentUpdate: function () {
+class RecycleBinDialogWrap extends React.Component {
+  shouldComponentUpdate() {
     return false;
-  },
-  show: function (options) {
+  }
+
+  show = (options) => {
     this.refs.recycleBinDialog.show(options);
-  },
-  hide: function () {
+  };
+
+  hide = () => {
     this.refs.recycleBinDialog.hide();
-  },
-  isVisible: function () {
+  };
+
+  isVisible = () => {
     return this.refs.recycleBinDialog.isVisible();
-  },
-  render: function () {
+  };
+
+  render() {
     return <RecycleBinDialog ref="recycleBinDialog" />;
   }
-});
+}
 
 module.exports = RecycleBinDialogWrap;

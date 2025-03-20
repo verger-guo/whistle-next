@@ -90,11 +90,12 @@ function hasSelector(selector) {
     : $(selector).length;
 }
 
-var Editor = React.createClass({
-  getThemes: function () {
+class Editor extends React.Component {
+  getThemes = () => {
     return themes;
-  },
-  setMode: function (mode) {
+  };
+
+  setMode = (mode) => {
     if (/^(javascript|css|xml|rules|markdown)$/i.test(mode)) {
       mode = RegExp.$1.toLowerCase();
     } else if (/^(js|pac|jsx|json)$/i.test(mode)) {
@@ -115,15 +116,17 @@ var Editor = React.createClass({
       }
       this.setFoldGutter(this.props.foldGutter);
     }
-  },
-  setValue: function (value) {
+  };
+
+  setValue = (value) => {
     value = this._value = value == null ? '' : value + '';
     if (!this._editor || this._editor.getValue() == value) {
       return;
     }
     this._editor.setValue(value);
-  },
-  setHistory: function(init, history) {
+  };
+
+  setHistory = (init, history) => {
     var modal = this.props.modal;
     if (!modal) {
       return;
@@ -160,43 +163,50 @@ var Editor = React.createClass({
         }
       }
     }
-  },
-  getValue: function () {
+  };
+
+  getValue = () => {
     return this._editor ? '' : this._editor.getValue();
-  },
-  setTheme: function (theme) {
+  };
+
+  setTheme = (theme) => {
     theme = this._theme = theme || DEFAULT_THEME;
     if (!this._editor) {
       return;
     }
     this._editor.setOption('theme', theme);
-  },
-  setFontSize: function (fontSize) {
+  };
+
+  setFontSize = (fontSize) => {
     fontSize = this._fontSize = fontSize || DEFAULT_FONT_SIZE;
     if (this._editor) {
       ReactDOM.findDOMNode(this.refs.editor).style.fontSize = fontSize;
     }
-  },
-  showLineNumber: function (show) {
+  };
+
+  showLineNumber = (show) => {
     show = this._showLineNumber = show === false ? false : true;
     if (this._editor) {
       this._editor.setOption('lineNumbers', show);
     }
-  },
-  showLineWrapping: function (show) {
+  };
+
+  showLineWrapping = (show) => {
     show = this._showLineNumber = show === false ? false : true;
     if (this._editor) {
       this._editor.setOption('lineWrapping', show);
     }
-  },
-  setReadOnly: function (readOnly) {
+  };
+
+  setReadOnly = (readOnly) => {
     readOnly = this._readOnly =
       readOnly === false || readOnly === 'false' ? false : true;
     if (this._editor) {
       this._editor.setOption('readOnly', readOnly);
     }
-  },
-  handleKeyUp: function(_, e) {
+  };
+
+  handleKeyUp = (_, e) => {
     clearTimeout(this._timer);
     var _byDelete = e.keyCode === 8;
     if (_byDelete || e.keyCode === 13) {
@@ -209,8 +219,9 @@ var Editor = React.createClass({
         }
       }, 300);
     }
-  },
-  setAutoComplete: function () {
+  };
+
+  setAutoComplete = () => {
     var isRules = this.isRulesEditor();
     var option = isRules && !this.props.readOnly ? rulesHint.getExtraKeys() : {};
     if (!/\(Macintosh;/i.test(window.navigator.userAgent)) {
@@ -221,10 +232,10 @@ var Editor = React.createClass({
     editor.setOption('extraKeys', option);
     editor.off('keyup', this.handleKeyUp);
     isRules && editor.on('keyup', this.handleKeyUp);
-  },
+  };
 
   // 设置代码折叠
-  setFoldGutter: function (foldGutter) {
+  setFoldGutter = (foldGutter) => {
     if (this.props.mode === 'rules') {
       return;
     }
@@ -234,12 +245,13 @@ var Editor = React.createClass({
       this._editor.setOption('foldGutter', foldGutter);
       this._editor.setOption('gutters', foldGutter ? GUTTER_STYLE : []);
     }
-  },
+  };
 
-  isRulesEditor: function () {
+  isRulesEditor = () => {
     return this.props.mode === 'rules' || this._mode === 'rules';
-  },
-  componentDidMount: function () {
+  };
+
+  componentDidMount() {
     var timeout;
     var timer;
     var self = this;
@@ -543,8 +555,9 @@ var Editor = React.createClass({
         editor.setSelections(ranges);
       }
     });
-  },
-  _init: function (init) {
+  }
+
+  _init = (init) => {
     var self = this;
     var mode = self.props.mode;
     if (self._waitingUpdate && mode === 'rules') {
@@ -575,11 +588,13 @@ var Editor = React.createClass({
     self.setReadOnly(self.props.readOnly || false);
     self.setAutoComplete();
     self.setFoldGutter(self.props.foldGutter);
-  },
-  componentDidUpdate: function () {
+  };
+
+  componentDidUpdate() {
     this._init();
-  },
-  render: function () {
+  }
+
+  render() {
     return (
       <div
         tabIndex="0"
@@ -588,6 +603,6 @@ var Editor = React.createClass({
       ></div>
     );
   }
-});
+}
 
 module.exports = Editor;

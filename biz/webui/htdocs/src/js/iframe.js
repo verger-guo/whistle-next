@@ -3,19 +3,21 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 var $ = require('jquery');
 
-var IFrame = React.createClass({
-  getWindow: function() {
+class IFrame extends React.Component {
+  getWindow = () => {
     return ReactDOM.findDOMNode(this.refs.iframe).contentWindow;
-  },
-  componentDidMount: function() {
+  };
+
+  componentDidMount() {
     $(document).on('mousedown', '.w-iframe-mask', function() {
       $('.w-iframe-mask').hide();
     })
     .on('mouseenter', '.w-iframe[allow-dragover=1]', function() {
       $('.w-iframe-mask').hide().parent().removeAttr('allow-dragover');
     });
-  },
-  render: function() {
+  }
+
+  render() {
     var props = this.props;
     var className = props.className;
     return (
@@ -25,6 +27,6 @@ var IFrame = React.createClass({
       </div>
     );
   }
-});
+}
 
 module.exports = IFrame;

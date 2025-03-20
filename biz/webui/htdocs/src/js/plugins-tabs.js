@@ -2,21 +2,26 @@ var React = require('react');
 var util = require('./util');
 var TabMgr = require('./tab-mgr');
 
-var PluginsTabs = React.createClass({
-  getInitialState: function () {
-    var tab = this.props.tabs[0];
-    return {
+class PluginsTabs extends React.Component {
+  constructor(props) {
+    super(props);
+    var tab = props.tabs[0];
+
+    this.state = {
       active: tab && tab.plugin
     };
-  },
-  shouldComponentUpdate: function (nextProps) {
+  }
+
+  shouldComponentUpdate(nextProps) {
     var hide = util.getBoolean(this.props.hide);
     return hide != util.getBoolean(nextProps.hide) || !hide;
-  },
-  onSelect: function (tab) {
+  }
+
+  onSelect = (tab) => {
     this.setState({ active: tab.plugin });
-  },
-  render: function () {
+  };
+
+  render() {
     var self = this;
     var props = self.props;
     var tabs = props.tabs;
@@ -53,6 +58,6 @@ var PluginsTabs = React.createClass({
       </div>
     );
   }
-});
+}
 
 module.exports = PluginsTabs;

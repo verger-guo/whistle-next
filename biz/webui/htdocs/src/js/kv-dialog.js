@@ -6,11 +6,10 @@ var util = require('./util');
 var events = require('./events');
 var win = require('./win');
 
-var KVDialog = React.createClass({
-  getInitialState: function () {
-    return { list: [], history: [] };
-  },
-  show: function (data, rulesModal, valuesModal, isValues, selectedHistory) {
+class KVDialog extends React.Component {
+  state = { list: [], history: [] };
+
+  show = (data, rulesModal, valuesModal, isValues, selectedHistory) => {
     this.isValues = isValues;
     this.refs.kvDialog.show();
     this._hideDialog = false;
@@ -37,22 +36,27 @@ var KVDialog = React.createClass({
         isValues
       )
     });
-  },
-  hide: function () {
+  };
+
+  hide = () => {
     this.refs.kvDialog.hide();
     this._hideDialog = true;
-  },
-  shouldComponentUpdate: function () {
+  };
+
+  shouldComponentUpdate() {
     return this._hideDialog === false;
-  },
-  selectHistory: function(e) {
+  }
+
+  selectHistory = (e) => {
     var onHistoryChange = this.props.onHistoryChange;
     onHistoryChange && onHistoryChange(e.target.value, this.isValues);
-  },
-  viewContent: function (e) {
+  };
+
+  viewContent = (e) => {
     util.openEditor(e.target.title);
-  },
-  confirm: function () {
+  };
+
+  confirm = () => {
     var data = {};
     var hasConflict;
     var self = this;
@@ -73,8 +77,9 @@ var KVDialog = React.createClass({
           events.trigger(self.isValues ? 'uploadValues' : 'uploadRules', data);
       }
     );
-  },
-  remove: function (item) {
+  };
+
+  remove = (item) => {
     var self = this;
     win.confirm('Are you sure to delete \'' + item.name + '\'.', function (sure) {
       if (sure) {
@@ -85,8 +90,9 @@ var KVDialog = React.createClass({
         }
       }
     });
-  },
-  render: function () {
+  };
+
+  render() {
     var self = this;
     var state = self.state;
     var list = state.list || [];
@@ -183,6 +189,6 @@ var KVDialog = React.createClass({
       </Dialog>
     );
   }
-});
+}
 
 module.exports = KVDialog;

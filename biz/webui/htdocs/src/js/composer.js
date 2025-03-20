@@ -181,8 +181,9 @@ function parseJson(text) {
   } catch(e) {}
 }
 
-var Composer = React.createClass({
-  getInitialState: function () {
+class Composer extends React.Component {
+  constructor(props, context) {
+    super(props, context);
     var rules = storage.get('composerRules');
     var data = util.parseJSON(storage.get('composerData')) || {};
     var showPretty = storage.get('showPretty') == '1';
@@ -213,7 +214,8 @@ var Composer = React.createClass({
         this.uploadBodyData = uploadBodyData;
       }
     }
-    return {
+
+    this.state = {
       loading: true,
       repeatTimes: 1,
       historyData: [],
@@ -232,8 +234,9 @@ var Composer = React.createClass({
       isHexText: !!storage.get('showHexTextBody'),
       isCRLF: !!storage.get('useCRLBody')
     };
-  },
-  componentDidMount: function () {
+  }
+
+  componentDidMount() {
     var self = this;
     self.update(self.props.modal);
     this.refs.uploadBody.update(this.uploadBodyData);
@@ -323,16 +326,18 @@ var Composer = React.createClass({
       }
     });
     events.trigger('composerDidMount');
-  },
-  repeatTimesChange: function (e) {
+  }
+
+  repeatTimesChange = (e) => {
     var count = e.target.value.replace(/^\s*0*|[^\d]+/, '');
     var repeatTimes = count.slice(0, 3);
     if (repeatTimes > MAX_REPEAT_TIMES) {
       repeatTimes = MAX_REPEAT_TIMES;
     }
     this.setState({ repeatTimes: repeatTimes });
-  },
-  repeatRequest: function(e) {
+  };
+
+  repeatRequest = (e) => {
     if (e && e.type !== 'click' && e.keyCode !== 13) {
       return;
     }
@@ -342,8 +347,9 @@ var Composer = React.createClass({
     } else {
       this.execute(null, this.state.repeatTimes);
     }
-  },
-  loadHistory: function () {
+  };
+
+  loadHistory = () => {
     var self = this;
     if (self.state.loading === 2) {
       return;
@@ -359,13 +365,15 @@ var Composer = React.createClass({
       }
       setTimeout(this.loadHistory, 6000);
     });
-  },
-  getMethod: function () {
+  };
+
+  getMethod = () => {
     var curMethod = this.state.method || 'GET';
     var method = ReactDOM.findDOMNode(this.refs.method).value || curMethod;
     return method === '+ Custom' ? method : curMethod;
-  },
-  updatePrettyData: function () {
+  };
+
+  updatePrettyData = () => {
     if (!this.state.showPretty) {
       return;
     }
@@ -378,8 +386,9 @@ var Composer = React.createClass({
     }
     body = util.parseQueryString(body, null, null, decodeURIComponent);
     this.refs.prettyBody.update(body);
-  },
-  update: function (item) {
+  };
+
+  update = (item) => {
     if (!item) {
       return;
     }
@@ -407,8 +416,9 @@ var Composer = React.createClass({
     }
     this.updatePrettyData();
     this.updateUploadForm(req);
-  },
-  parseUploadModal: function(req) {
+  };
+
+  parseUploadModal = (req) => {
     var fields = util.parseUploadBody(req);
     var uploadModal = {};
     fields &&
@@ -422,19 +432,22 @@ var Composer = React.createClass({
         }
       });
     return uploadModal;
-  },
-  updateUploadForm: function(req) {
+  };
+
+  updateUploadForm = (req) => {
     if (!isUpload(req.headers)) {
       return false;
     }
     this.refs.uploadBody.update(this.parseUploadModal(req));
     return true;
-  },
-  shouldComponentUpdate: function (nextProps) {
+  };
+
+  shouldComponentUpdate(nextProps) {
     var hide = util.getBoolean(this.props.hide);
     return hide != util.getBoolean(nextProps.hide) || !hide;
-  },
-  getComposerData: function() {
+  }
+
+  getComposerData = () => {
     var refs = this.refs;
     var method = this.getMethod();
     var url = ReactDOM.findDOMNode(this.refs.url).value.trim();
@@ -447,8 +460,9 @@ var Composer = React.createClass({
       useH2: this.state.useH2 ? 1 : '',
       body: replaceCRLF(ReactDOM.findDOMNode(refs.body).value)
     };
-  },
-  saveComposer: function () {
+  };
+
+  saveComposer = () => {
     var data = this.getComposerData();
     this.state.url = data.url;
     this.state.headers = data.headers;
@@ -457,8 +471,9 @@ var Composer = React.createClass({
       this.setState({});
     }
     return data;
-  },
-  addHistory: function (params) {
+  };
+
+  addHistory = (params) => {
     var self = this;
     var historyData = self.state.historyData;
     params.date = Date.now();
@@ -481,8 +496,9 @@ var Composer = React.createClass({
       historyData.splice(MAX_COUNT, overflow);
     }
     self.setState({ historyData: self.formatHistory(historyData) });
-  },
-  formatHistory: function (data) {
+  };
+
+  formatHistory = (data) => {
     var result = [];
     var histroyUrls = [];
     var groupList = [];
@@ -532,8 +548,9 @@ var Composer = React.createClass({
       this.showHints();
     }
     return result;
-  },
-  onHexTextChange: function (e) {
+  };
+
+  onHexTextChange = (e) => {
     var isHexText = e.target.checked;
     storage.set('showHexTextBody', isHexText ? 1 : '');
     var elem = ReactDOM.findDOMNode(this.refs.body);
@@ -555,13 +572,15 @@ var Composer = React.createClass({
     }
     this.setState({ isHexText: isHexText });
     this.saveComposer();
-  },
-  onCRLFChange: function (e) {
+  };
+
+  onCRLFChange = (e) => {
     var isCRLF = e.target.checked;
     storage.set('useCRLBody', isCRLF ? 1 : '');
     this.setState({ isCRLF: isCRLF });
-  },
-  updateRules: function(rules) {
+  };
+
+  updateRules = (rules) => {
     if (Array.isArray(rules)) {
       rules = rules.join('\n');
     }
@@ -572,8 +591,9 @@ var Composer = React.createClass({
       this.onRulesChange();
       this.setRulesDisable(false);
     }
-  },
-  onCompose: function (item) {
+  };
+
+  onCompose = (item) => {
     if (!item) {
       return;
     }
@@ -655,23 +675,27 @@ var Composer = React.createClass({
     storage.set('disableComposerBody', this.state.disableBody ? 1 : '');
     storage.set('useH2InComposer', item.useH2 ? 1 : '');
     storage.set('showHexTextBody', isHexText ? 1 : '');
-  },
-  onReplay: function (times) {
+  };
+
+  onReplay = (times) => {
     if (this._selectedItem) {
       this.sendRequest($.extend({}, this._selectedItem, { repeatCount: times || 1 }));
     }
-  },
-  handleUrlKeyUp: function(e) {
+  };
+
+  handleUrlKeyUp = (e) => {
     if (e.keyCode === 27) {
       this.hideHints();
     }
-  },
-  onUrlChange: function(e) {
+  };
+
+  onUrlChange = (e) => {
     this.onComposerChange(e);
     clearTimeout(this._urlTimer);
     this._urlTimer = setTimeout(this.showHints, 300);
-  },
-  onComposerChange: function (e) {
+  };
+
+  onComposerChange = (e) => {
     var self = this;
     clearTimeout(self.composerTimer);
     self.composerTimer = setTimeout(self.saveComposer, 1000);
@@ -691,8 +715,9 @@ var Composer = React.createClass({
         }, 1000);
       }
     }
-  },
-  onTypeChange: function (e) {
+  };
+
+  onTypeChange = (e) => {
     var target = e.target;
     if (target.nodeName !== 'INPUT') {
       return;
@@ -721,17 +746,21 @@ var Composer = React.createClass({
       this.updatePrettyData();
       this.saveComposer();
     }
-  },
-  addHeader: function () {
+  };
+
+  addHeader = () => {
     this.refs.prettyHeaders.onAdd();
-  },
-  addField: function () {
+  };
+
+  addField = () => {
     this.refs.prettyBody.onAdd();
-  },
-  addUploadFiled: function () {
+  };
+
+  addUploadFiled = () => {
     this.refs.uploadBody.onAdd();
-  },
-  onHeaderChange: function (key, newKey) {
+  };
+
+  onHeaderChange = (key, newKey) => {
     var refs = this.refs;
     var headers = refs.prettyHeaders.toString();
     ReactDOM.findDOMNode(refs.headers).value = headers;
@@ -744,8 +773,9 @@ var Composer = React.createClass({
         type: getType(util.parseHeaders(headers))
       });
     }
-  },
-  onFieldChange: function () {
+  };
+
+  onFieldChange = () => {
     var refs = this.refs;
     var body = refs.prettyBody.toString();
     if (body && this.state.isHexText) {
@@ -753,8 +783,9 @@ var Composer = React.createClass({
     }
     ReactDOM.findDOMNode(refs.body).value = body;
     this.saveComposer();
-  },
-  updateUploadData: function () {
+  };
+
+  updateUploadData = () => {
     var fields = this.refs.uploadBody.getFields();
     var result = {};
     var maxLen = MAX_UPLOAD_SIZE;
@@ -778,18 +809,21 @@ var Composer = React.createClass({
       }
     });
     storage.set('composerUploadBody', JSON.stringify(result));
-  },
-  onProxyRules: function (e) {
+  };
+
+  onProxyRules = (e) => {
     var enable = e.target.checked;
     storage.set('composerProxyRules', enable ? 1 : '');
     this.setState({ enableProxyRules: enable });
-  },
-  onShowPretty: function (e) {
+  };
+
+  onShowPretty = (e) => {
     var show = e.target.checked;
     storage.set('showPretty', show ? 1 : 0);
     this.setState({ showPretty: show }, this.updatePrettyData);
-  },
-  toggleH2: function (e) {
+  };
+
+  toggleH2 = (e) => {
     var self = this;
     if (!dataCenter.supportH2) {
       win.confirm(
@@ -804,43 +838,51 @@ var Composer = React.createClass({
     var useH2 = e.target.checked;
     storage.set('useH2InComposer', useH2 ? 1 : '');
     self.setState({ useH2: useH2 });
-  },
-  hideHistory: function() {
+  };
+
+  hideHistory = () => {
     if (this.state.showHistory) {
       this.setState({ showHistory: false });
     }
-  },
-  toggleHistory: function () {
+  };
+
+  toggleHistory = () => {
     var showHistory = !this.state.showHistory;
     this.setState({ showHistory: showHistory });
     showHistory && this.loadHistory();
     this.hideHints();
-  },
-  setRulesDisable: function (disableComposerRules) {
+  };
+
+  setRulesDisable = (disableComposerRules) => {
     storage.set('disableComposerRules', disableComposerRules ? 1 : 0);
     this.setState({ disableComposerRules: disableComposerRules });
-  },
-  onDisableChange: function (e) {
+  };
+
+  onDisableChange = (e) => {
     this.setRulesDisable(!e.target.checked);
-  },
-  enableRules: function () {
+  };
+
+  enableRules = () => {
     if (this.state.disableComposerRules) {
       this.setRulesDisable(false);
     }
-  },
-  handeHistoryReplay: function(item, repeatTimes) {
+  };
+
+  handeHistoryReplay = (item, repeatTimes) => {
     this._selectedItem = item;
     if (repeatTimes) {
       this.showRepeatTimes(true);
     } else {
       this.onReplay();
     }
-  },
-  handleHistoryEdit: function(item) {
+  };
+
+  handleHistoryEdit = (item) => {
     this.onCompose(item);
     this.hideHistory();
-  },
-  showRepeatTimes: function(isReplay) {
+  };
+
+  showRepeatTimes = (isReplay) => {
     var self = this;
     self.refs.setRepeatTimes.show();
     self._isReplay = isReplay;
@@ -850,8 +892,9 @@ var Composer = React.createClass({
       input.select();
       input.focus();
     }, 300);
-  },
-  execute: function (e, times) {
+  };
+
+  execute = (e, times) => {
     times = times > 0 ? Math.min(MAX_REPEAT_TIMES, times) : undefined;
     if (e && !times && e.target.nodeName === 'INPUT' && e.keyCode !== 13) {
       return;
@@ -989,8 +1032,9 @@ var Composer = React.createClass({
       isHexText: isHexText,
       enableProxyRules: this.state.enableProxyRules
     });
-  },
-  sendRequest: function(params) {
+  };
+
+  sendRequest = (params) => {
     var self = this;
     clearTimeout(self.comTimer);
     self.comTimer = setTimeout(function () {
@@ -1045,18 +1089,21 @@ var Composer = React.createClass({
     this.addHistory(params);
     events.trigger('executeComposer');
     self.setState({ result: '', pending: true });
-  },
-  selectAll: function (e) {
+  };
+
+  selectAll = (e) => {
     e.target.select();
     this.showHints();
-  },
-  saveRules: function () {
+  };
+
+  saveRules = () => {
     var rules = ReactDOM.findDOMNode(this.refs.composerRules).value;
     this.state.rules = rules;
     storage.set('composerRules', rules);
     this.setState({});
-  },
-  formatJSON: function () {
+  };
+
+  formatJSON = () => {
     var body = ReactDOM.findDOMNode(this.refs.body);
     if (!body.value.trim()) {
       return;
@@ -1066,16 +1113,19 @@ var Composer = React.createClass({
       body.value = JSON.stringify(data, null, '  ');
       this.saveComposer();
     }
-  },
-  inspectJSON: function() {
+  };
+
+  inspectJSON = () => {
     var body = ReactDOM.findDOMNode(this.refs.body).value;
     events.trigger('showJsonViewDialog', body.trim());
-  },
-  onRulesChange: function () {
+  };
+
+  onRulesChange = () => {
     clearTimeout(this.rulesTimer);
     this.rulesTimer = setTimeout(this.saveRules, 600);
-  },
-  onKeyDown: function (e) {
+  };
+
+  onKeyDown = (e) => {
     if (e.ctrlKey || e.metaKey) {
       if (e.keyCode == 68) {
         e.target.value = '';
@@ -1085,8 +1135,9 @@ var Composer = React.createClass({
         e.stopPropagation();
       }
     }
-  },
-  showCookiesDialog: function() {
+  };
+
+  showCookiesDialog = () => {
     var self = this;
     var url = ReactDOM.findDOMNode(self.refs.url).value;
     var host = util.getHostname(url).toLowerCase();
@@ -1143,8 +1194,9 @@ var Composer = React.createClass({
       };
       self.refs.cookiesDialog.show(result);
     });
-  },
-  insertCookie: function(cookie) {
+  };
+
+  insertCookie = (cookie) => {
     var elem = ReactDOM.findDOMNode(this.refs.headers);
     var headers = util.parseHeaders(elem.value);
     headers.cookie = cookie;
@@ -1153,17 +1205,20 @@ var Composer = React.createClass({
       this.refs.prettyHeaders.update(headers);
     }
     this.saveComposer();
-  },
-  setUrl: function(value) {
+  };
+
+  setUrl = (value) => {
     ReactDOM.findDOMNode(this.refs.url).value = value || '';
     this.hideHints();
     this.onComposerChange();
-  },
-  clickHints: function(e) {
+  };
+
+  clickHints = (e) => {
     var value = e.target.title;
     value && this.setUrl(value);
-  },
-  onUrlKeyDown: function(e) {
+  };
+
+  onUrlKeyDown = (e) => {
     var elem;
     if (e.keyCode === 38) {
       // up
@@ -1211,23 +1266,26 @@ var Composer = React.createClass({
         this.setUrl();
       }
     }
-  },
-  onTabChange: function (e) {
+  };
+
+  onTabChange = (e) => {
     var tabName = e.target.name || 'Request';
     if (tabName === this.state.tabName) {
       return;
     }
     this.setState({ tabName: tabName, initedResponse: true });
-  },
-  onContextMenu: function(e) {
+  };
+
+  onContextMenu = (e) => {
     e.preventDefault();
     var data = util.getMenuPosition(e, 125);
     data.list = SEND_CTX_MENU;
     SEND_CTX_MENU[2].name = this.state.showHistory ? 'Hide History' : 'Show History';
     this.refs.contextMenu.show(data);
     this.hideHints();
-  },
-  showHints: function() {
+  };
+
+  showHints = () => {
     var list = this._histroyUrls;
     if (!list || !list.length) {
       this.state.showHints = true;
@@ -1242,14 +1300,16 @@ var Composer = React.createClass({
       urlHints = null;
     }
     this.setState({ showHints: true, urlHints: urlHints });
-  },
-  hideHints: function() {
+  };
+
+  hideHints = () => {
     if (this.state.showHints) {
       $(this.refs.hints).find('.w-active').removeClass('w-active');
     }
     this.setState({ showHints: false });
-  },
-  showParams: function() {
+  };
+
+  showParams = () => {
     var url = ReactDOM.findDOMNode(this.refs.url).value.replace(/#.*$/, '');
     var index = url.indexOf('?');
     var hasQuery = index !== -1;
@@ -1261,20 +1321,23 @@ var Composer = React.createClass({
     } else {
       this.setState({ showParams: true, hasQuery: hasQuery });
     }
-  },
-  hideParams: function() {
+  };
+
+  hideParams = () => {
     if (this.state.showParams) {
       this.setState({ showParams: false });
     }
-  },
-  toggleParams: function() {
+  };
+
+  toggleParams = () => {
     if (this.state.showParams) {
       this.hideParams();
     } else {
       this.showParams();
     }
-  },
-  clearQuery: function() {
+  };
+
+  clearQuery = () => {
     var self = this;
     win.confirm('Are you sure to delete all params?', function(sure) {
       if (sure) {
@@ -1282,18 +1345,21 @@ var Composer = React.createClass({
         self.hideParams();
       }
     });
-  },
-  addQueryParam: function() {
+  };
+
+  addQueryParam = () => {
     this.refs.paramsEditor.onAdd();
-  },
-  onParamsChange: function () {
+  };
+
+  onParamsChange = () => {
     var query = this.refs.paramsEditor.toString();
     var elem = ReactDOM.findDOMNode(this.refs.url);
     elem.value = util.replacQuery(elem.value, query);
     this.saveComposer();
     this.setState({ hasQuery: !!query });
-  },
-  onClickContextMenu: function (action) {
+  };
+
+  onClickContextMenu = (action) => {
     switch (action) {
     case 'Repeat Times':
       return this.showRepeatTimes();
@@ -1302,13 +1368,15 @@ var Composer = React.createClass({
     case 'file':
       this.uploadFile();
     }
-  },
-  uploadFile: function() {
+  };
+
+  uploadFile = () => {
     if (!this.reading) {
       ReactDOM.findDOMNode(this.refs.readLocalFile).click();
     }
-  },
-  readLocalFile: function () {
+  };
+
+  readLocalFile = () => {
     var form = new FormData(ReactDOM.findDOMNode(this.refs.readLocalFileForm));
     var file = form.get('localFile');
     if (file.size > MAX_FILE_SIZE) {
@@ -1322,16 +1390,19 @@ var Composer = React.createClass({
       self.execute();
     });
     ReactDOM.findDOMNode(this.refs.readLocalFile).value = '';
-  },
-  import: function(e) {
+  };
+
+  import = (e) => {
     events.trigger('importSessions', e);
     this.hoverOutImport();
-  },
-  showImportCURL: function() {
+  };
+
+  showImportCURL = () => {
     this.hoverOutImport();
     this.refs.editorDialog.show();
-  },
-  importCURL: function(text) {
+  };
+
+  importCURL = (text) => {
     text = text.trim();
     if (!text) {
       message.error('The text cannot be empty.');
@@ -1351,8 +1422,9 @@ var Composer = React.createClass({
       return false;
     }
 
-  },
-  copyAsCURL: function() {
+  };
+
+  copyAsCURL = () => {
     var state = this.state;
     var body = ReactDOM.findDOMNode(this.refs.body).value;
     var base64 = '';
@@ -1370,8 +1442,9 @@ var Composer = React.createClass({
       }
     });
     util.copyText(text, true);
-  },
-  export: function() {
+  };
+
+  export = () => {
     var data = this.getComposerData();
     var state = this.state;
     data.disableBody = state.disableBody;
@@ -1385,35 +1458,41 @@ var Composer = React.createClass({
       name: 'composer_' + Date.now() + '.txt',
       value: JSON.stringify(data, null, '  ')
     });
-  },
-  onBodyStateChange: function (e) {
+  };
+
+  onBodyStateChange = (e) => {
     var disableBody = !e.target.checked;
     this.setState({ disableBody: disableBody });
     storage.set('disableComposerBody', disableBody ? 1 : '');
     if (!disableBody) {
       this.setState({ tabName: 'Request' });
     }
-  },
-  focusEnableBody: function () {
+  };
+
+  focusEnableBody = () => {
     this.setState({ disableBody: false });
     storage.set('disableComposerBody', '');
-  },
-  _hoverOutImport: function() {
+  };
 
-  },
-  hoverInImport: function() {
+  _hoverOutImport = () => {
+
+  };
+
+  hoverInImport = () => {
     clearTimeout(this._hoverOutTimer);
     this._hoverOutTimer = null;
     this.setState({ overImport: true });
-  },
-  hoverOutImport: function() {
+  };
+
+  hoverOutImport = () => {
     var self = this;
     self._hoverOutTimer = self._hoverOutTimer || setTimeout(function() {
       self._hoverOutTimer = null;
       self.setState({ overImport: false });
     }, 80);
-  },
-  render: function () {
+  };
+
+  render() {
     var self = this;
     var state = self.state;
     var type = state.type;
@@ -1952,6 +2031,6 @@ var Composer = React.createClass({
       </div>
     );
   }
-});
+}
 
 module.exports = Composer;

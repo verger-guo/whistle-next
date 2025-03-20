@@ -26,51 +26,54 @@ var COOKIE_HEADERS = [
   'Partitioned'
 ];
 
-var ResDetail = React.createClass({
-  getInitialState: function () {
-    return {
-      initedHeaders: false,
-      initedTrailers: false,
-      initedTextView: false,
-      initedPreview: false,
-      initedCookies: false,
-      initedJSONView: false,
-      initedHexView: false,
-      initedRaw: false,
-      initPlugins: false,
-      btns: [
-        { name: 'Headers' },
-        { name: 'Preview' },
-        { name: 'TextView', display: 'Body' },
-        { name: 'JSONView' },
-        { name: 'HexView' },
-        { name: 'Cookies' },
-        { name: 'Trailers' },
-        { name: 'Raw' },
-        { name: 'Plugins', hide: true }
-      ]
-    };
-  },
-  componentDidMount: function () {
+class ResDetail extends React.Component {
+  state = {
+    initedHeaders: false,
+    initedTrailers: false,
+    initedTextView: false,
+    initedPreview: false,
+    initedCookies: false,
+    initedJSONView: false,
+    initedHexView: false,
+    initedRaw: false,
+    initPlugins: false,
+    btns: [
+      { name: 'Headers' },
+      { name: 'Preview' },
+      { name: 'TextView', display: 'Body' },
+      { name: 'JSONView' },
+      { name: 'HexView' },
+      { name: 'Cookies' },
+      { name: 'Trailers' },
+      { name: 'Raw' },
+      { name: 'Plugins', hide: true }
+    ]
+  };
+
+  componentDidMount() {
     var self = this;
     events.on('resTabsChange', function () {
       self.setState({});
     });
-  },
-  shouldComponentUpdate: function (nextProps) {
+  }
+
+  shouldComponentUpdate(nextProps) {
     var hide = util.getBoolean(this.props.hide);
     return hide != util.getBoolean(nextProps.hide) || !hide;
-  },
-  onClickBtn: function (btn) {
+  }
+
+  onClickBtn = (btn) => {
     this.selectBtn(btn);
     this.setState({});
-  },
-  selectBtn: function (btn) {
+  };
+
+  selectBtn = (btn) => {
     btn.active = true;
     this.state.btn = btn;
     this.state['inited' + btn.name] = true;
-  },
-  render: function () {
+  };
+
+  render() {
     var state = this.state;
     var btns = state.btns;
     var btn = state.btn;
@@ -349,6 +352,6 @@ var ResDetail = React.createClass({
       </div>
     );
   }
-});
+}
 
 module.exports = ResDetail;

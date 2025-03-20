@@ -26,35 +26,39 @@ function compare(a, b) {
   return a > b ? 1 : -1;
 }
 
-var JsonViewer = React.createClass({
-  getInitialState: function () {
-    return { lastData: {} };
-  },
-  shouldComponentUpdate: function (nextProps) {
+class JsonViewer extends React.Component {
+  state = { lastData: {} };
+
+  shouldComponentUpdate(nextProps) {
     var hide = util.getBoolean(this.props.hide);
     return hide != util.getBoolean(nextProps.hide) || !hide;
-  },
-  preventBlur: function (e) {
+  }
+
+  preventBlur = (e) => {
     e.target.nodeName != 'INPUT' && e.preventDefault();
-  },
-  getCurStr: function() {
+  };
+
+  getCurStr = () => {
     var data = this.props.data;
     return data && data.str;
-  },
-  edit: function () {
+  };
+
+  edit = () => {
     var str = this.getCurStr();
     if (str) {
       util.openEditor(str);
     }
-  },
-  onContextMenu: function(e) {
+  };
+
+  onContextMenu = (e) => {
     var isDialog = this.props.dialog;
     var ctxMenu = util.getMenuPosition(e, 110, isDialog ? 60 : 90);
     ctxMenu.list = isDialog ? contextMenuList : contextMenuList.concat(SEARCH_MENU);
     this.refs.contextMenu.show(ctxMenu);
     e.preventDefault();
-  },
-  onClickContextMenu: function(action) {
+  };
+
+  onClickContextMenu = (action) => {
     if (action === 'Expand All') {
       this.expandAll();
     } else if (action === 'Collapse All') {
@@ -62,14 +66,16 @@ var JsonViewer = React.createClass({
     } else if (action === 'Search Object') {
       this.search();
     }
-  },
-  search: function() {
+  };
+
+  search = () => {
     var str = this.getCurStr();
     if (str) {
       events.trigger('showJsonViewDialog', str);
     }
-  },
-  showMockDialog: function(e) {
+  };
+
+  showMockDialog = (e) => {
     var self = this;
     var props = self.props;
     var reqData = props.reqData;
@@ -80,8 +86,9 @@ var JsonViewer = React.createClass({
       });
     }
     self.showNameInput(e);
-  },
-  showNameInput: function (e) {
+  };
+
+  showNameInput = (e) => {
     var self = this;
     self.state.showDownloadInput = /w-download/.test(e.target.className);
     self.state.showNameInput = true;
@@ -94,8 +101,9 @@ var JsonViewer = React.createClass({
       nameInput.select();
       nameInput.focus();
     });
-  },
-  hideNameInput: function () {
+  };
+
+  hideNameInput = () => {
     this.state.showNameInput = false;
     this.forceUpdate(function () {
       var nameInput = ReactDOM.findDOMNode(this.refs.nameInput);
@@ -104,8 +112,9 @@ var JsonViewer = React.createClass({
         nameInput.value = '';
       }
     });
-  },
-  submit: function (e) {
+  };
+
+  submit = (e) => {
     if (e.keyCode != 13 && e.type != 'click') {
       return;
     }
@@ -151,8 +160,9 @@ var JsonViewer = React.createClass({
       'The key \'' + name + '\' already exists.\nDo you want to override it.',
       handleSubmit
     );
-  },
-  download: function () {
+  };
+
+  download = () => {
     var target = ReactDOM.findDOMNode(this.refs.nameInput);
     var name = target.value.trim();
     target.value = '';
@@ -161,11 +171,13 @@ var JsonViewer = React.createClass({
     ReactDOM.findDOMNode(this.refs.content).value = data.str || '';
     ReactDOM.findDOMNode(this.refs.downloadForm).submit();
     this.hideNameInput();
-  },
-  toggle: function () {
+  };
+
+  toggle = () => {
     this.setState({ viewSource: !this.state.viewSource });
-  },
-  componentDidMount: function () {
+  };
+
+  componentDidMount() {
     var viewer = $(ReactDOM.findDOMNode(this.refs.jsonViewer));
     viewer
       .on('mouseenter', STR_SELECTOR, function (e) {
@@ -189,8 +201,9 @@ var JsonViewer = React.createClass({
           window.open((RegExp.$1 || 'http:') + RegExp.$2);
         }
       });
-  },
-  expandAll: function() {
+  }
+
+  expandAll = () => {
     var expandedStatus = this.state.expandedStatus || 0;
     ++expandedStatus;
     this.setState({
@@ -199,8 +212,9 @@ var JsonViewer = React.createClass({
         return expandedStatus;
       }
     });
-  },
-  collapseAll: function() {
+  };
+
+  collapseAll = () => {
     var expandedStatus = this.state.expandedStatus;
     if (expandedStatus) {
       expandedStatus = false;
@@ -215,8 +229,9 @@ var JsonViewer = React.createClass({
         return expandedStatus;
       }
     });
-  },
-  render: function () {
+  };
+
+  render() {
     var state = this.state;
     var viewSource = state.viewSource;
     var props = this.props;
@@ -318,6 +333,6 @@ var JsonViewer = React.createClass({
       </div>
     );
   }
-});
+}
 
 module.exports = JsonViewer;

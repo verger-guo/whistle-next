@@ -25,19 +25,19 @@ var ACTION_OPTIONS = [
   }
 ];
 
-var RecordBtn = React.createClass({
-  getInitialState: function () {
-    return { stop: false };
-  },
-  onClick: function () {
+class RecordBtn extends React.Component {
+  state = { stop: false };
+
+  onClick = () => {
     var stop = !this.state.stop;
     this.state.pause = false;
     this.state.stop = stop;
     ACTION_OPTIONS[0] = PAUSE_OPTION;
     this.props.onClick(stop ? 'stop' : 'refresh');
     this.setState({});
-  },
-  enable: function (flag) {
+  };
+
+  enable = (flag) => {
     var state = this.state;
     var pause = state.pause;
     var stop = state.stop;
@@ -57,18 +57,21 @@ var RecordBtn = React.createClass({
     }
 
     this.onClickOption({ id: flag });
-  },
-  showActionOptions: function () {
+  };
+
+  showActionOptions = () => {
     this.setState({
       showActionOptions: true
     });
-  },
-  hideActionOptions: function () {
+  };
+
+  hideActionOptions = () => {
     this.setState({
       showActionOptions: false
     });
-  },
-  onClickOption: function (option) {
+  };
+
+  onClickOption = (option) => {
     if (option.id === 'pause') {
       ACTION_OPTIONS[0] = STOP_OPTION;
       this.state.pause = true;
@@ -80,8 +83,9 @@ var RecordBtn = React.createClass({
     }
     this.props.onClick(option.id);
     this.hideActionOptions();
-  },
-  render: function () {
+  };
+
+  render() {
     var state = this.state;
     var hide = this.props.hide;
     var pause = state.pause;
@@ -120,6 +124,6 @@ var RecordBtn = React.createClass({
       </div>
     );
   }
-});
+}
 
 module.exports = RecordBtn;

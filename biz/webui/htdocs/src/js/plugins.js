@@ -133,8 +133,8 @@ function getRegistryList(cb) {
   });
 }
 
-var Home = React.createClass({
-  componentDidMount: function () {
+class Home extends React.Component {
+  componentDidMount() {
     var self = this;
     self.setUpdateAllBtnState();
     events.on('openPluginOption', function(_, plugin) {
@@ -193,11 +193,13 @@ var Home = React.createClass({
         }, self.showMsgDialog);
       });
     });
-  },
-  componentDidUpdate: function () {
+  }
+
+  componentDidUpdate() {
     this.setUpdateAllBtnState();
-  },
-  execCmd: function() {
+  }
+
+  execCmd = () => {
     var state = this.state;
     var install = state.install;
     var cmd = install ? state.installMsg : state.cmdMsg;
@@ -211,8 +213,9 @@ var Home = React.createClass({
     dataCenter.plugins[(isInstall ? '' : 'un' ) + 'installPlugins']({
       cmd: cmd
     }, handlePlugins);
-  },
-  onOpen: function (e) {
+  };
+
+  onOpen = (e) => {
     var name = e.target.getAttribute('data-name');
     var data = this.props.data;
     var plugin = data && data.plugins && data.plugins[name + ':'] || {};
@@ -222,17 +225,21 @@ var Home = React.createClass({
       this.props.onOpen && this.props.onOpen(e);
     }
     e.preventDefault();
-  },
-  syncData: function (plugin) {
+  };
+
+  syncData = (plugin) => {
     dataCenter.syncData(plugin);
-  },
-  showDialog: function () {
+  };
+
+  showDialog = () => {
     this.refs.pluginRulesDialog.show();
-  },
-  hideDialog: function () {
+  };
+
+  hideDialog = () => {
     this.refs.pluginRulesDialog.hide();
-  },
-  onShowRules: function(name) {
+  };
+
+  onShowRules = (name) => {
     var plugin = this.props.data.plugins[name + ':'];
     plugin.name = name;
     this.setState(
@@ -241,15 +248,18 @@ var Home = React.createClass({
       },
       this.showDialog
     );
-  },
-  showRules: function (e) {
+  };
+
+  showRules = (e) => {
     var name = $(e.target).attr('data-name');
     this.onShowRules(name);
-  },
-  onCmdChange: function (e) {
+  };
+
+  onCmdChange = (e) => {
     this.updateCmdMsg(e.target.value);
-  },
-  showMsgDialog: function () {
+  };
+
+  showMsgDialog = () => {
     var self = this;
     self.refs.operatePluginDialog.show();
     if (self.state.install) {
@@ -257,15 +267,17 @@ var Home = React.createClass({
         ReactDOM.findDOMNode(self.refs.textarea).focus();
       }, 600);
     }
-  },
-  updateCmdMsg: function(msg, cb) {
+  };
+
+  updateCmdMsg = (msg, cb) => {
     if (this.state.install) {
       this.setState({ installMsg: msg }, cb);
     } else {
       this.setState({ cmdMsg: msg }, cb);
     }
-  },
-  onRegistry: function(e) {
+  };
+
+  onRegistry = (e) => {
     var registry = e.target.value;
     if (registry === '+Add') {
       var textarea = ReactDOM.findDOMNode(this.refs.textarea);
@@ -289,13 +301,15 @@ var Home = React.createClass({
     }
     this.setState({ registry: registry, registryChanged: true });
     storage.set('pluginsRegistry', registry);
-  },
-  onShowUpdate: function(e) {
+  };
+
+  onShowUpdate = (e) => {
     var name = $(e.target).attr('data-name');
     var plugin = this.props.data.plugins[name + ':'];
     this.showUpdate(plugin);
-  },
-  showUpdate: function (plugin) {
+  };
+
+  showUpdate = (plugin) => {
     var self = this;
     getRegistryList(function(result, r) {
       self.setState(
@@ -311,8 +325,9 @@ var Home = React.createClass({
         self.showMsgDialog
       );
     });
-  },
-  showInstall: function() {
+  };
+
+  showInstall = () => {
     var self = this;
     getRegistryList(function(result, r) {
       self.setState({
@@ -322,13 +337,15 @@ var Home = React.createClass({
         registryChanged: true
       }, self.showMsgDialog);
     });
-  },
-  onShowUninstall: function(e) {
+  };
+
+  onShowUninstall = (e) => {
     var name = $(e.target).attr('data-name');
     var plugin = this.props.data.plugins[name + ':'];
     this.showUninstall(plugin);
-  },
-  showUninstall: function (plugin) {
+  };
+
+  showUninstall = (plugin) => {
     var self = this;
     var sudo = self.props.data.isWin ? '' : 'sudo ';
     var isSys = plugin.isSys || dataCenter.enablePluginMgr;
@@ -369,8 +386,9 @@ var Home = React.createClass({
         update();
       });
     }
-  },
-  enableAllPlugins: function (e) {
+  };
+
+  enableAllPlugins = (e) => {
     var self = this;
     var data = self.props.data || {};
     if (pendingEnable || !data.disabledAllPlugins) {
@@ -379,11 +397,13 @@ var Home = React.createClass({
     win.confirm('Do you want to turn on Plugins?', function (sure) {
       sure && enableAllPlugins(e);
     });
-  },
-  setUpdateAllBtnState: function () {
+  };
+
+  setUpdateAllBtnState = () => {
     events.trigger('setUpdateAllBtnState', this.hasNewPlugin);
-  },
-  render: function () {
+  };
+
+  render() {
     var self = this;
     var data = self.props.data || {};
     var plugins = data.plugins || {};
@@ -738,7 +758,7 @@ var Home = React.createClass({
       </div>
     );
   }
-});
+}
 
 function getPluginInfo(plugin) {
   if (!plugin) {
@@ -753,8 +773,8 @@ function getPluginInfo(plugin) {
   return copyText.join('\n');
 }
 
-var Tabs = React.createClass({
-  componentDidMount: function () {
+class Tabs extends React.Component {
+  componentDidMount() {
     var self = this;
     var tabPanel = ReactDOM.findDOMNode(self.refs.tabPanel);
     var wrapper = tabPanel.parentNode;
@@ -778,20 +798,24 @@ var Tabs = React.createClass({
     self._resizeHandler = resizeHandler;
     resizeHandler();
     $(window).on('resize', resizeHandler);
-  },
-  shouldComponentUpdate: function (nextProps) {
+  }
+
+  shouldComponentUpdate(nextProps) {
     return !this.props.hide || !nextProps.hide;
-  },
-  componentDidUpdate: function (prevProps) {
+  }
+
+  componentDidUpdate(prevProps) {
     if (prevProps.hide && !this.props.hide) {
       this._resizeHandler();
     }
-  },
-  onClose: function (e) {
+  }
+
+  onClose = (e) => {
     this.props.onClose && this.props.onClose(e);
     e.stopPropagation();
-  },
-  onContextMenu: function(e) {
+  };
+
+  onContextMenu = (e) => {
     e.preventDefault();
     var target = $(e.target);
     var row = target.closest('.w-plugins-item');
@@ -833,8 +857,9 @@ var Tabs = React.createClass({
     var data = util.getMenuPosition(e, 110, 250 - (pluginItem.hide ? 0 : 30));
     data.list = CTX_MENU_LIST;
     this.refs.contextMenu.show(data);
-  },
-  onClickContextMenu: function(action, _, parentAction, name) {
+  };
+
+  onClickContextMenu = (action, _, parentAction, name) => {
     var plugin = this._curPlugin;
     var props = this.props;
     switch (parentAction || action) {
@@ -865,8 +890,9 @@ var Tabs = React.createClass({
       });
       return;
     }
-  },
-  render: function () {
+  };
+
+  render() {
     var self = this;
     var props = self.props;
     var tabs = props.tabs || [];
@@ -965,6 +991,6 @@ var Tabs = React.createClass({
       </div>
     );
   }
-});
+}
 
 module.exports = Tabs;

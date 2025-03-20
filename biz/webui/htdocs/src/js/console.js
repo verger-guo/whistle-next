@@ -59,41 +59,40 @@ function parseLog(log, expandRoot) {
   return <ExpandCollapse text={log.text} />;
 }
 
-var Console = React.createClass({
-  getInitialState: function () {
-    return {
-      scrollToBottom: true,
-      logIdList: [allLogs],
-      levels: [
-        {
-          value: '',
-          text: 'All levels'
-        },
-        {
-          value: 'debug',
-          text: 'Debug'
-        },
-        {
-          value: 'info',
-          text: 'Info/Log'
-        },
-        {
-          value: 'warn',
-          text: 'Warn'
-        },
-        {
-          value: 'error',
-          text: 'Error'
-        },
-        {
-          value: 'fatal',
-          text: 'Fatal'
-        }
-      ],
-      expandRoot: storage.get('expandJsonRoot') != 1
-    };
-  },
-  componentDidMount: function () {
+class Console extends React.Component {
+  state = {
+    scrollToBottom: true,
+    logIdList: [allLogs],
+    levels: [
+      {
+        value: '',
+        text: 'All levels'
+      },
+      {
+        value: 'debug',
+        text: 'Debug'
+      },
+      {
+        value: 'info',
+        text: 'Info/Log'
+      },
+      {
+        value: 'warn',
+        text: 'Warn'
+      },
+      {
+        value: 'error',
+        text: 'Error'
+      },
+      {
+        value: 'fatal',
+        text: 'Fatal'
+      }
+    ],
+    expandRoot: storage.get('expandJsonRoot') != 1
+  };
+
+  componentDidMount() {
     var self = this;
     var container = (this.container = ReactDOM.findDOMNode(
       self.refs.container
@@ -154,11 +153,13 @@ var Console = React.createClass({
         }, 2000);
       }
     });
-  },
-  selectFile: function () {
+  }
+
+  selectFile = () => {
     ReactDOM.findDOMNode(this.refs.importData).click();
-  },
-  importData: function () {
+  };
+
+  importData = () => {
     var form = new FormData(ReactDOM.findDOMNode(this.refs.importDataForm));
     var file = form.get('importData');
     if (!file || !/\.log$/i.test(file.name)) {
@@ -172,30 +173,37 @@ var Console = React.createClass({
       logs && events.trigger('uploadLogs', { logs: logs });
     });
     ReactDOM.findDOMNode(this.refs.importData).value = '';
-  },
-  changeLogId: function (option) {
+  };
+
+  changeLogId = (option) => {
     dataCenter.changeLogId(option.value);
-  },
-  changeLevel: function (option) {
+  };
+
+  changeLevel = (option) => {
     this.setState({ level: option.value });
-  },
-  clearLogs: function () {
+  };
+
+  clearLogs = () => {
     dataCenter.clearedLogs = true;
     dataCenter.clearLogList();
     this.setState({ logs: [] });
-  },
-  scrollTop: function () {
+  };
+
+  scrollTop = () => {
     this.container.scrollTop = 0;
-  },
-  autoRefresh: function () {
+  };
+
+  autoRefresh = () => {
     this.container.scrollTop = 10000000;
-  },
-  stopAutoRefresh: function () {
+  };
+
+  stopAutoRefresh = () => {
     if (util.scrollAtBottom(this.container, this.content)) {
       this.container.scrollTop = this.container.scrollTop - 10;
     }
-  },
-  shouldComponentUpdate: function (nextProps) {
+  };
+
+  shouldComponentUpdate(nextProps) {
     var hide = util.getBoolean(this.props.hide);
     var toggleHide = hide != util.getBoolean(nextProps.hide);
     if (toggleHide || !hide) {
@@ -210,13 +218,15 @@ var Console = React.createClass({
       return true;
     }
     return false;
-  },
-  componentDidUpdate: function () {
+  }
+
+  componentDidUpdate() {
     if (!this.props.hide && this.state.scrollToBottom) {
       this.container.scrollTop = 10000000;
     }
-  },
-  onConsoleFilterChange: function (keyword) {
+  }
+
+  onConsoleFilterChange = (keyword) => {
     var self = this;
     keyword = keyword.trim();
     var logs = self.state.logs;
@@ -232,8 +242,9 @@ var Console = React.createClass({
       self.filterTimer = null;
       self.setState({});
     }, 500);
-  },
-  showNameInput: function (e) {
+  };
+
+  showNameInput = (e) => {
     var self = this;
     self.setState(
       {
@@ -243,8 +254,9 @@ var Console = React.createClass({
         ReactDOM.findDOMNode(self.refs.nameInput).focus();
       }
     );
-  },
-  download: function () {
+  };
+
+  download = () => {
     var target = ReactDOM.findDOMNode(this.refs.nameInput);
     var name = target.value.trim();
     var logs = [];
@@ -267,20 +279,24 @@ var Console = React.createClass({
     );
     ReactDOM.findDOMNode(this.refs.downloadForm).submit();
     this.hideNameInput();
-  },
-  submit: function (e) {
+  };
+
+  submit = (e) => {
     if (e.keyCode !== 13 && e.type != 'click') {
       return;
     }
     this.download();
-  },
-  preventBlur: function (e) {
+  };
+
+  preventBlur = (e) => {
     e.target.nodeName != 'INPUT' && e.preventDefault();
-  },
-  hideNameInput: function () {
+  };
+
+  hideNameInput = () => {
     this.setState({ showNameInput: false });
-  },
-  handleAction: function (type) {
+  };
+
+  handleAction = (type) => {
     if (type === 'top') {
       return this.scrollTop();
     }
@@ -296,8 +312,9 @@ var Console = React.createClass({
     if (refresh) {
       return this.autoRefresh();
     }
-  },
-  onBeforeShow: function () {
+  };
+
+  onBeforeShow = () => {
     var list = dataCenter.getLogIdList() || [];
     list = list.map(function (id) {
       return {
@@ -309,11 +326,13 @@ var Console = React.createClass({
     this.setState({
       logIdList: list
     });
-  },
-  changeExpandRoot: function (e) {
+  };
+
+  changeExpandRoot = (e) => {
     this.state.expandRoot = e.target.checked;
-  },
-  render: function () {
+  };
+
+  render() {
     var state = this.state;
     var logs = state.logs || [];
     var logIdList = state.logIdList;
@@ -449,6 +468,6 @@ var Console = React.createClass({
       </div>
     );
   }
-});
+}
 
 module.exports = Console;

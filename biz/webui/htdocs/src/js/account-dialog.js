@@ -4,23 +4,27 @@ var ReactDOM = require('react-dom');
 var Dialog = require('./dialog');
 var events = require('./events');
 
-var AccountDialog = React.createClass({
-  show: function(url) {
+class AccountDialog extends React.Component {
+  show = (url) => {
     if (url) {
       ReactDOM.findDOMNode(this.refs.iframe).src = url;
     }
     this.refs.dialog.show();
-  },
-  hide: function() {
+  };
+
+  hide = () => {
     this.refs.dialog.hide();
-  },
-  shouldComponentUpdate: function() {
+  };
+
+  shouldComponentUpdate() {
     return false;
-  },
-  openInNewWin: function() {
+  }
+
+  openInNewWin = () => {
     events.trigger('openInNewWin');
-  },
-  render: function() {
+  };
+
+  render() {
     var className = this.props.className;
     return (
       <Dialog ref="dialog" wstyle={'w-account-dialog' + (className ? ' ' + className : '')}>
@@ -35,6 +39,6 @@ var AccountDialog = React.createClass({
       </Dialog>
     );
   }
-});
+}
 
 module.exports = AccountDialog;

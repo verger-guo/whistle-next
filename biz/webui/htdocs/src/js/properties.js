@@ -7,17 +7,18 @@ var ExpandCollapse = require('./expand-collapse');
 var ContextMenu = require('./context-menu');
 var JSONTree = require('./components/react-json-tree')['default'];
 
-var Properties = React.createClass({
-  getInitialState: function () {
-    return { viewSource: false };
-  },
-  toggle: function () {
+class Properties extends React.Component {
+  state = { viewSource: false };
+
+  toggle = () => {
     this.setState({ viewSource: !this.state.viewSource });
-  },
-  renderValue: function(val) {
+  };
+
+  renderValue = (val) => {
     return val && val.length >= 2100 ? <ExpandCollapse text={val} /> : val;
-  },
-  renderKey: function(name) {
+  };
+
+  renderKey = (name) => {
     var onHelp = this.props.onHelp;
     var index = this.props.richKey ? name.indexOf('\r\u0000(') : -1;
     return (<th>
@@ -30,11 +31,13 @@ var Properties = React.createClass({
       {this.renderValue(index === -1 ? name : name.substring(0, index))}
       {index === -1 ? null : <span className="w-gray">{name.substring(index + 2)}</span>}
     </th>);
-  },
-  onContextMenu: function(e) {
+  };
+
+  onContextMenu = (e) => {
     util.handlePropsContextMenu(e, this.refs.contextMenu);
-  },
-  render: function () {
+  };
+
+  render() {
     var self = this;
     var props = self.props;
     var sourceText = props.enableViewSource;
@@ -179,6 +182,6 @@ var Properties = React.createClass({
       </div>
     );
   }
-});
+}
 
 module.exports = Properties;

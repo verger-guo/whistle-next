@@ -3,14 +3,16 @@ require('../css/menu-item.css');
 var React = require('react');
 var util = require('./util');
 
-var MenuItem = React.createClass({
-  preventBlur: function (e) {
+class MenuItem extends React.Component {
+  preventBlur = (e) => {
     e.preventDefault();
-  },
-  stopPropagation: function (e) {
+  };
+
+  stopPropagation = (e) => {
     e.stopPropagation();
-  },
-  render: function () {
+  };
+
+  render() {
     var self = this;
     var options = self.props.options;
     if (options && !options.length) {
@@ -99,6 +101,6 @@ var MenuItem = React.createClass({
       </div>
     );
   }
-});
+}
 
 module.exports = MenuItem;

@@ -7,11 +7,10 @@ var FbBtn = require('./forward-back-btn');
 
 var KV_RE = /^(k|v):/;
 
-var JSONDialog = React.createClass({
-  getInitialState: function () {
-    return { history: [] };
-  },
-  onFilter: function(keyword) {
+class JSONDialog extends React.Component {
+  state = { history: [] };
+
+  onFilter = (keyword) => {
     keyword = keyword.trim();
     var self = this;
     self._type = 0;
@@ -30,8 +29,9 @@ var JSONDialog = React.createClass({
       var data = self.state.data;
       self.setState({ curData: data && self.filterJson(data) });
     }, 600);
-  },
-  filterJson: function(data) {
+  };
+
+  filterJson = (data) => {
     if (!this._keyword) {
       return;
     }
@@ -43,8 +43,9 @@ var JSONDialog = React.createClass({
       json: json,
       str: JSON.stringify(json, null, '  ')
     };
-  },
-  show: function(text, keyPath) {
+  };
+
+  show = (text, keyPath) => {
     if (!text) {
       return;
     }
@@ -69,8 +70,9 @@ var JSONDialog = React.createClass({
     }
     this.state.historyIndex = historyIndex;
     this._show(text, keyPath);
-  },
-  _show: function (text, keyPath) {
+  };
+
+  _show = (text, keyPath) => {
     var self = this;
     var data = this.state.data;
     this.setState({ keyPath: Array.isArray(keyPath) ? keyPath : null });
@@ -99,32 +101,37 @@ var JSONDialog = React.createClass({
       self.refs.jsonDialog.show();
       self.focus();
     });
-  },
-  showHistory: function(index) {
+  };
+
+  showHistory = (index) => {
     this.state.historyIndex = index;
     var item = this.state.history[index];
     this._show(item[0], item[1] == null ? null : [item[1]]);
-  },
-  onBack: function() {
+  };
+
+  onBack = () => {
     var historyIndex = this.state.historyIndex;
     if (historyIndex > 0) {
       this.showHistory(historyIndex - 1);
     }
-  },
-  onForward: function() {
+  };
+
+  onForward = () => {
     var history = this.state.history;
     var historyIndex = this.state.historyIndex + 1;
     if (historyIndex < history.length) {
       this.showHistory(historyIndex);
     }
-  },
-  focus: function() {
+  };
+
+  focus = () => {
     var self = this;
     setTimeout(function() {
       self.refs.filterInput.focus();
     }, 600);
-  },
-  render: function () {
+  };
+
+  render() {
     var state = this.state;
     var history = state.history;
     var historyIndex = state.historyIndex;
@@ -161,18 +168,20 @@ var JSONDialog = React.createClass({
       </Dialog>
     );
   }
-});
+}
 
-var JSONDialogWrap = React.createClass({
-  shouldComponentUpdate: function () {
+class JSONDialogWrap extends React.Component {
+  shouldComponentUpdate() {
     return false;
-  },
-  show: function (text, keyPath) {
+  }
+
+  show = (text, keyPath) => {
     this.refs.jsonDialog.show(text, keyPath);
-  },
-  render: function () {
+  };
+
+  render() {
     return <JSONDialog ref="jsonDialog" />;
   }
-});
+}
 
 module.exports = JSONDialogWrap;

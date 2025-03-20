@@ -2,8 +2,8 @@ require('./base-css.js');
 require('../css/editor-settings.css');
 var React = require('react');
 
-var EditorSettings = React.createClass({
-  render: function () {
+class EditorSettings extends React.Component {
+  render() {
     return (
       <div className="w-editor-settings">
         <p>
@@ -83,6 +83,6 @@ var EditorSettings = React.createClass({
       </div>
     );
   }
-});
+}
 
 module.exports = EditorSettings;

@@ -10,32 +10,36 @@ var TabMgr = require('./tab-mgr');
 var ContextMenu = require('./context-menu');
 var Properties = require('./properties');
 
-var Inspectors = React.createClass({
-  getInitialState: function () {
-    return { activeName: 'Request', urlModal: { Url: '' } };
-  },
-  shouldComponentUpdate: function (nextProps) {
+class Inspectors extends React.Component {
+  state = { activeName: 'Request', urlModal: { Url: '' } };
+
+  shouldComponentUpdate(nextProps) {
     var hide = util.getBoolean(this.props.hide);
     return hide != util.getBoolean(nextProps.hide) || !hide;
-  },
-  componentDidMount: function () {
+  }
+
+  componentDidMount() {
     var self = this;
     events.on('tabsChange', function () {
       self.setState({});
     });
-  },
-  showTab: function (name) {
+  }
+
+  showTab = (name) => {
     if (this.state.activeName !== name) {
       this.setState({ activeName: name });
     }
-  },
-  isActive: function (name) {
+  };
+
+  isActive = (name) => {
     return this.state.activeName === name;
-  },
-  getStyle: function (name) {
+  };
+
+  getStyle = (name) => {
     return 'btn btn-default' + (this.isActive(name) ? ' w-spec-active' : '');
-  },
-  render: function () {
+  };
+
+  render() {
     var self = this;
     var props = self.props;
     var modal = props.modal;
@@ -104,6 +108,6 @@ var Inspectors = React.createClass({
       </div>
     );
   }
-});
+}
 
 module.exports = Inspectors;

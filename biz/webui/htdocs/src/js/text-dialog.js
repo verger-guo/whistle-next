@@ -2,19 +2,19 @@ var React = require('react');
 var Dialog = require('./dialog');
 var Textarea = require('./textarea');
 
-var TextDialog = React.createClass({
-  getInitialState: function () {
-    return {};
-  },
-  show: function (value, base64, name) {
+class TextDialog extends React.Component {
+  state = {};
+
+  show = (value, base64, name) => {
     if (value) {
       var self = this;
       self.setState({ value: value, base64: base64, name: name }, function () {
         self.refs.textDialog.show();
       });
     }
-  },
-  render: function () {
+  };
+
+  render() {
     var state = this.state;
     var value = state.value;
     return (
@@ -54,18 +54,20 @@ var TextDialog = React.createClass({
       </Dialog>
     );
   }
-});
+}
 
-var TextDialogWrap = React.createClass({
-  shouldComponentUpdate: function () {
+class TextDialogWrap extends React.Component {
+  shouldComponentUpdate() {
     return false;
-  },
-  show: function (value, base64, name) {
+  }
+
+  show = (value, base64, name) => {
     this.refs.textDialog.show(value, base64, name);
-  },
-  render: function () {
+  };
+
+  render() {
     return <TextDialog ref="textDialog" />;
   }
-});
+}
 
 module.exports = TextDialogWrap;

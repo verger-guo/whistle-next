@@ -28,18 +28,18 @@ var BTNS = [
   }
 ];
 
-var Tools = React.createClass({
-  getInitialState: function () {
-    return { name: 'Console' };
-  },
-  componentDidMount: function() {
+class Tools extends React.Component {
+  state = { name: 'Console' };
+
+  componentDidMount() {
     var self = this;
     events.on('toolTabsChange', function () {
       self.changeTab = true;
       self.setState({});
     });
-  },
-  shouldComponentUpdate: function (nextProps) {
+  }
+
+  shouldComponentUpdate(nextProps) {
     var hide = util.getBoolean(this.props.hide);
     if (hide != util.getBoolean(nextProps.hide)) {
       return true;
@@ -50,19 +50,22 @@ var Tools = React.createClass({
     var changeTab = this.changeTab;
     this.changeTab = false;
     return changeTab === true;
-  },
-  toggleTabs: function (btn) {
+  }
+
+  toggleTabs = (btn) => {
     this.changeTab = true;
     this.setState({ name: btn.name, plugin: null });
-  },
-  clearLogs: function () {
+  };
+
+  clearLogs = () => {
     if (BTNS[0].active) {
       this.refs.console.clearLogs();
     } else if (BTNS[1].active) {
       this.refs.serverLog.clearLogs();
     }
-  },
-  onDoubleClickBar: function () {
+  };
+
+  onDoubleClickBar = () => {
     if (BTNS[0].active) {
       if (this.refs.console.container.scrollTop < 5) {
         this.refs.console.autoRefresh();
@@ -76,20 +79,24 @@ var Tools = React.createClass({
         this.refs.serverLog.scrollTop();
       }
     }
-  },
-  isActive: function (name) {
+  };
+
+  isActive = (name) => {
     var plugin = this.state.plugin;
     return plugin && plugin.plugin === name;
-  },
-  getStyle: function (name) {
+  };
+
+  getStyle = (name) => {
     return 'btn btn-default' + (this.isActive(name) ? ' w-spec-active' : '');
-  },
-  showCustomTab: function(tab) {
+  };
+
+  showCustomTab = (tab) => {
     this.changeTab = true;
     this.refs.tabs.clearSelection();
     this.setState({ name: null, plugin: tab });
-  },
-  createCustomTabs: function() {
+  };
+
+  createCustomTabs = () => {
     var self = this;
     var tabs = dataCenter.getToolTabs();
     if (!tabs.length) {
@@ -116,8 +123,9 @@ var Tools = React.createClass({
         }
       </div>
     );
-  },
-  render: function () {
+  };
+
+  render() {
     var state = this.state;
     var name = state.name;
     return (
@@ -153,6 +161,6 @@ var Tools = React.createClass({
       </div>
     );
   }
-});
+}
 
 module.exports = Tools;

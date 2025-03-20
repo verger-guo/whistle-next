@@ -24,14 +24,14 @@ function getRaw(item) {
   return curRaw;
 }
 
-var HistoryData = React.createClass({
-  getInitialState: function() {
-    return {};
-  },
-  shouldComponentUpdate: function (nextProps) {
+class HistoryData extends React.Component {
+  state = {};
+
+  shouldComponentUpdate(nextProps) {
     return this.props.show || nextProps.show !== this.props.show;
-  },
-  getItem: function () {
+  }
+
+  getItem = () => {
     var list = this.props.data;
     for (var i = 0, len = list.length; i < len; i++) {
       var item = list[i];
@@ -39,11 +39,13 @@ var HistoryData = React.createClass({
         return item;
       }
     }
-  },
-  scrollToTop: function() {
+  };
+
+  scrollToTop = () => {
     ReactDOM.findDOMNode(this.refs.list).scrollTop = 0;
-  },
-  copyAsCURL: function() {
+  };
+
+  copyAsCURL = () => {
     var item = this.getItem();
     if (!item) {
       return;
@@ -65,26 +67,31 @@ var HistoryData = React.createClass({
       }
     });
     util.copyText(text, true);
-  },
-  onEdit: function () {
+  };
+
+  onEdit = () => {
     this.props.onEdit(this.getItem());
-  },
-  onReplay: function () {
+  };
+
+  onReplay = () => {
     this.props.onReplay(this.getItem());
     this.scrollToTop();
-  },
-  onReplayTimes: function() {
+  };
+
+  onReplayTimes = () => {
     this.props.onReplay(this.getItem(), true);
     this.scrollToTop();
-  },
-  handleClick: function(item) {
+  };
+
+  handleClick = (item) => {
     this.props.data.forEach(function(item) {
       item.selected = false;
     });
     item.selected = true;
     this.setState({});
-  },
-  export: function() {
+  };
+
+  export = () => {
     var groupList = this.props.data && this.props.data._groupList;
     if (!groupList) {
       return;
@@ -122,8 +129,9 @@ var HistoryData = React.createClass({
         });
       }
     }
-  },
-  render: function () {
+  };
+
+  render() {
     var self = this;
     var props = self.props;
     var show = props.show;
@@ -202,6 +210,6 @@ var HistoryData = React.createClass({
       </div>
     );
   }
-});
+}
 
 module.exports = HistoryData;
