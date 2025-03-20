@@ -62,7 +62,8 @@
     "xml2js": "0.5.0"
   },
   "scripts": {
-    "dev": "webpack --config ./biz/webui/htdocs/src/webpack.config.js -w",
+    "dev": "webpack serve --config ./biz/webui/htdocs/src/webpack.dev.config.js",
+    "dev:build": "webpack --config ./biz/webui/htdocs/src/webpack.config.js -w",
     "start": "node bin/whistle.js run",
     "test": "npm run lintfix && node test/index.test.js",
     "lint": "eslint *.js ./lib ./bin ./biz ./test ./docs/script",
@@ -120,6 +121,7 @@
     "url-loader": "^4.1.1",
     "webpack": "^5.98.0",
     "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.0",
     "ws": "^1.1.4"
   }
 }
